@@ -1,0 +1,71 @@
+.topbar {
+  height: 60px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.left, .right {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+}
+
+.right {
+  justify-content: flex-end;
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--critical);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--critical);
+}
+
+.dot {
+  color: var(--critical);
+}
+
+.center {
+  text-align: center;
+}
+
+.time {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.date {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.actionBtn {
+  padding: 8px 14px;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}

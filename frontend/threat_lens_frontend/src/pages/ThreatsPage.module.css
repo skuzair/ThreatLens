@@ -1,0 +1,153 @@
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heatmapItem {
+  display: grid;
+  grid-template-columns: 180px 1fr 40px;
+  gap: 12px;
+  align-items: center;
+}
+
+.tacticName {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.heatmapBar {
+  height: 24px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.heatmapFill {
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.tacticCount {
+  font-weight: 700;
+  text-align: right;
+}
+
+.iocList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ioc {
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.iocHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.iocThreat {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.iocValue {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--critical);
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.iocActions {
+  display: flex;
+  gap: 8px;
+}
+
+.iocActions button {
+  flex: 1;
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.intentList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.intentItem {
+  display: grid;
+  grid-template-columns: 140px 1fr 50px;
+  gap: 12px;
+  align-items: center;
+}
+
+.intentBar {
+  height: 20px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.intentFill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+
+.origins {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.origin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.countryCode {
+  font-weight: 700;
+  font-size: 16px;
+  padding: 4px 8px;
+  background: var(--bg-card);
+  border-radius: 4px;
+  min-width: 36px;
+  text-align: center;
+}
+
+.originCount {
+  margin-left: auto;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
