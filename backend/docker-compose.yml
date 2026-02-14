@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  
+  postgres:
+    image: postgres:15
+    container_name: threatlens-postgres
+    environment:
+      POSTGRES_DB: threatlens
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: threatlens123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - threatlens-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: threatlens-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - threatlens-network
+
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: threatlens-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - threatlens-network
+    
+  minio:
+    image: minio/minio
+    container_name: threatlens-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - threatlens-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: threatlens-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - threatlens-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: threatlens-kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    networks:
+      - threatlens-network
+
+  neo4j:
+    image: neo4j:5.14
+    container_name: threatlens-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/threatlens123
+      NEO4J_dbms_memory_pagecache_size: 512M
+      NEO4J_dbms_memory_heap_max__size: 512M
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - threatlens-network
+
+  ollama:
+    image: ollama/ollama
+    container_name: threatlens-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - threatlens-network
+    # After startup: docker exec -it threatlens-ollama ollama pull mistral:7b
+
+volumes:
+  postgres_data:
+  elasticsearch_data:
+  minio_data:
+  neo4j_data:
+  ollama_data:
+
+networks:
+  threatlens-network:
+    driver: bridge

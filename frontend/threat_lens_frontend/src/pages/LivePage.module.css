@@ -1,0 +1,111 @@
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.normal {
+  color: var(--low);
+  font-weight: 600;
+}
+
+.alert {
+  color: var(--critical);
+  font-weight: 600;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-tertiary);
+  font-style: italic;
+  font-size: 14px;
+}
+
+.zoneList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.zone {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.statusOk {
+  color: var(--low);
+  font-size: 13px;
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.event {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.eventTime {
+  color: var(--text-tertiary);
+}
+
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meter {
+  display: grid;
+  grid-template-columns: 80px 1fr 60px;
+  gap: 12px;
+  align-items: center;
+}
+
+.meterBar {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meterFill {
+  height: 100%;
+  transition: width 0.3s;
+}
