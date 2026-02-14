@@ -7,11 +7,76 @@ from datetime import datetime
 from database.postgres import get_db_session
 from database.schemas import Incident as IncidentDB
 from models.incident import (
-    IncidentResponse, IncidentListResponse, IncidentUpdate,
+    IncidentResponse, IncidentListResponse, IncidentUpdate, IncidentCreate,
     TimelineEvent, AttackGraph, AttackGraphNode, AttackGraphEdge
 )
 
 router = APIRouter()
+
+
+@router.post("/", response_model=IncidentResponse, status_code=201)
+async def create_incident(
+    incident: IncidentCreate,
+    db: AsyncSession = Depends(get_db_session)
+):
+    """
+    Create a new incident
+    
+    - **incident_id**: Unique identifier for the incident
+    - **timestamp**: When the incident occurred
+    - **risk_score**: Risk score (0-100)
+    - **severity**: Severity level (CRITICAL/HIGH/MEDIUM/LOW)
+    - **rule_name**: Name of the triggered rule
+    - **sources_involved**: List of data sources involved
+    - **intent_primary**: Primary attack intent
+    - **intent_confidence**: Confidence in intent classification (0.0-1.0)
+    - **zone**: Network zone or area affected
+    """
+    try:
+        # Check if incident already exists
+        existing_query = select(IncidentDB).where(IncidentDB.incident_id == incident.incident_id)
+        existing_result = await db.execute(existing_query)
+        existing_incident = existing_result.scalar_one_or_none()
+        
+        if existing_incident:
+            raise HTTPException(status_code=409, detail=f"Incident {incident.incident_id} already exists")
+        
+        # Create new incident database record
+        db_incident = IncidentDB(
+            incident_id=incident.incident_id,
+            timestamp=incident.timestamp,
+            risk_score=incident.risk_score,
+            severity=incident.severity.value,
+            rule_name=incident.rule_name,
+            sources_involved=incident.sources_involved,
+            correlated_events=incident.correlated_events,
+            intent_primary=incident.intent_primary,
+            intent_confidence=incident.intent_confidence,
+            mitre_ttps=incident.mitre_ttps,
+            current_attack_stage=incident.current_attack_stage,
+            predicted_next_move=incident.predicted_next_move,
+            nlg_explanation=incident.nlg_explanation,
+            zone=incident.zone,
+            neo4j_node_ids=incident.neo4j_node_ids,
+            sandbox_triggered=False,
+            evidence_captured=False,
+            blockchain_anchored=False,
+            status="open",
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow()
+        )
+        
+        db.add(db_incident)
+        await db.commit()
+        await db.refresh(db_incident)
+        
+        return IncidentResponse.from_orm(db_incident)
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error creating incident: {str(e)}")
 
 
 @router.get("/", response_model=IncidentListResponse)

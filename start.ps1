@@ -67,23 +67,16 @@ if (!$ollamaCheck) {
 Write-Host ""
 Write-Host "Setting up Python environment..." -ForegroundColor Yellow
 
-if (!(Test-Path "venv")) {
+$venvPath = "..\venv"
+if (!(Test-Path $venvPath)) {
+    Write-Host "[WARNING] Virtual environment not found at $venvPath" -ForegroundColor Yellow
     Write-Host "Creating virtual environment..." -ForegroundColor Gray
+    Set-Location ..
     python -m venv venv
+    Set-Location backend
 }
 
-Write-Host "Activating virtual environment..." -ForegroundColor Gray
-& .\venv\Scripts\Activate.ps1
-
-Write-Host "Installing Python dependencies..." -ForegroundColor Gray
-pip install -q -r requirements.txt
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] Failed to install Python dependencies" -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "[OK] Python environment ready" -ForegroundColor Green
+Write-Host "[OK] Using virtual environment at $venvPath" -ForegroundColor Green
 
 # Setup .env if not exists
 if (!(Test-Path ".env")) {
@@ -95,7 +88,8 @@ if (!(Test-Path ".env")) {
 # Start FastAPI
 Write-Host ""
 Write-Host "Starting FastAPI server..." -ForegroundColor Yellow
-Start-Process -FilePath "python" -ArgumentList "main.py" -WorkingDirectory (Get-Location)
+$pythonExe = Resolve-Path "..\venv\Scripts\python.exe"
+Start-Process -FilePath $pythonExe -ArgumentList "main.py" -WorkingDirectory (Get-Location)
 Start-Sleep -Seconds 5
 
 # Check if API is up

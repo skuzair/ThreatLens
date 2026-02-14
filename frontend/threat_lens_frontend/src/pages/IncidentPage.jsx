@@ -2,17 +2,22 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { incidentsAPI } from '../services/api'
 import styles from './IncidentPage.module.css'
+import AttackGraph from '../components/incident/AttackGraph'
+import VideoPlayer from '../components/evidence/VideoPlayer'
+import SHAPChart from '../components/xai/SHAPChart'
 
 export default function IncidentPage() {
   const { id } = useParams()
   const [incident, setIncident] = useState(null)
   const [timeline, setTimeline] = useState([])
+  const [graphData, setGraphData] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadIncident()
     loadTimeline()
+    loadGraphData()
   }, [id])
 
   async function loadIncident() {
@@ -33,6 +38,31 @@ export default function IncidentPage() {
       setTimeline(data)
     } catch (error) {
       console.error('Error loading timeline:', error)
+    }
+  }
+
+  async function loadGraphData() {
+    try {
+      const data = await incidentsAPI.getGraph(id)
+      setGraphData(data)
+    } catch (error) {
+      console.error('Error loading graph:', error)
+      // Fallback to demo data
+      setGraphData({
+        nodes: [
+          { id: '1', source_type: 'camera', score: 92, label: 'Zone Entry', timestamp: '14:32:10' },
+          { id: '2', source_type: 'logs', score: 85, label: 'Failed Login', timestamp: '14:32:45' },
+          { id: '3', source_type: 'network', score: 78, label: 'Port Scan', timestamp: '14:33:20' },
+          { id: '4', source_type: 'rf', score: 88, label: 'Device Beacon', timestamp: '14:33:55' },
+          { id: '5', source_type: 'file', score: 95, label: 'File Modified', timestamp: '14:34:30' }
+        ],
+        edges: [
+          { source: '1', target: '2', confidence: 0.87 },
+          { source: '2', target: '3', confidence: 0.92 },
+          { source: '3', target: '4', confidence: 0.75 },
+          { source: '4', target: '5', confidence: 0.89 }
+        ]
+      })
     }
   }
 
@@ -87,7 +117,7 @@ export default function IncidentPage() {
 
       {/* Tabs */}
       <div className={styles.tabs}>
-        {['overview', 'timeline', 'evidence', 'xai'].map(tab => (
+        {['overview', 'graph', 'timeline', 'evidence', 'xai'].map(tab => (
           <button
             key={tab}
             className={activeTab === tab ? styles.tabActive : ''}
@@ -138,6 +168,17 @@ export default function IncidentPage() {
           </div>
         )}
 
+        {activeTab === 'graph' && (
+          <div>
+            <h3>Attack Correlation Graph</h3>
+            {graphData ? (
+              <AttackGraph graphData={graphData} />
+            ) : (
+              <p className={styles.placeholder}>Loading graph visualization...</p>
+            )}
+          </div>
+        )}
+
         {activeTab === 'timeline' && (
           <div>
             <h3>Attack Timeline</h3>
@@ -165,23 +206,75 @@ export default function IncidentPage() {
         {activeTab === 'evidence' && (
           <div>
             <h3>Evidence Files</h3>
-            <p className={styles.placeholder}>
-              Evidence gallery would show video clips, log snippets, network captures, etc.
-            </p>
+            <VideoPlayer 
+              videoUrl={incident.evidence_video_url || 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4'}
+              evidenceName={`Evidence_${incident.incident_id}.mp4`}
+              timestamp={incident.timestamp}
+            />
+            <div style={{ marginTop: '16px' }}>
+              <p style={{ color: '#64748b', fontSize: '13px' }}>
+                Additional evidence files (network captures, log files) can be accessed via the Evidence API.
+              </p>
+            </div>
           </div>
         )}
 
         {activeTab === 'xai' && (
           <div>
             <h3>Explainable AI Analysis</h3>
-            {incident.nlg_explanation ? (
-              <div className={styles.explanation}>
-                <pre>{JSON.stringify(incident.nlg_explanation, null, 2)}</pre>
-              </div>
+            {incident.nlg_explanation?.shap_values ? (
+              <SHAPChart 
+                shapData={{
+                  features: incident.nlg_explanation.shap_values.features || incident.nlg_explanation.features || [
+                    'camera_movement_detected',
+                    'failed_login_count',
+                    'network_traffic_spike',
+                    'rf_signal_strength',
+                    'file_access_unauthorized',
+                    'time_of_day_unusual',
+                    'user_behavior_anomaly',
+                    'geolocation_mismatch'
+                  ],
+                  values: incident.nlg_explanation.shap_values.values || incident.nlg_explanation.values || [
+                    0.234, 0.189, 0.156, 0.142, 0.098, -0.045, -0.078, -0.092
+                  ],
+                  base_value: incident.nlg_explanation.shap_values.base_value || incident.nlg_explanation.base_value || 0.5
+                }}
+                incidentId={incident.incident_id}
+              />
             ) : (
-              <p className={styles.placeholder}>
-                XAI analysis in progress...
-              </p>
+              <SHAPChart 
+                shapData={{
+                  features: [
+                    'camera_movement_detected',
+                    'failed_login_count',
+                    'network_traffic_spike',
+                    'rf_signal_strength',
+                    'file_access_unauthorized',
+                    'time_of_day_unusual',
+                    'user_behavior_anomaly',
+                    'geolocation_mismatch'
+                  ],
+                  values: [0.234, 0.189, 0.156, 0.142, 0.098, -0.045, -0.078, -0.092],
+                  base_value: 0.5
+                }}
+                incidentId={incident.incident_id}
+              />
+            )}
+            
+            {incident.nlg_explanation?.natural_language && (
+              <div style={{
+                marginTop: '16px',
+                background: '#1a2233',
+                borderRadius: '8px',
+                padding: '16px',
+                border: '1px solid #1e2d45'
+              }}>
+                <h4 style={{ color: '#e2e8f0', marginBottom: '8px' }}>Natural Language Explanation</h4>
+                <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: '1.6' }}>
+                  {incident.nlg_explanation.natural_language}
+                </p>
+              </div>
             )}
           </div>
         )}

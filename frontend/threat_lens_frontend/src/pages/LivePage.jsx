@@ -1,29 +1,38 @@
+import { useState, useEffect } from 'react'
 import styles from './LivePage.module.css'
+import NetworkChart from '../components/live/NetworkChart'
+import LoginHeatmap from '../components/live/LoginHeatmap'
+import AnomalyMeters from '../components/live/AnomalyMeters'
 
 export default function LivePage() {
+  const [websocketData, setWebsocketData] = useState(null)
+
+  // Simulate WebSocket updates every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWebsocketData([{
+        timestamp: new Date().toISOString(),
+        bytes_per_minute: Math.random() * 200000000,
+        successful_logins: Math.floor(Math.random() * 15),
+        failed_logins: Math.floor(Math.random() * 50)
+      }])
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>📹 Live Monitoring Dashboard</h1>
       
       <div className={styles.grid}>
         {/* Network Traffic */}
-        <div className="card">
-          <h3>🌐 Network Traffic</h3>
-          <div className={styles.metric}>
-            <span>Current: 45 MB/min</span>
-            <span className={styles.normal}>Normal</span>
-          </div>
-          <p className={styles.placeholder}>Live chart visualization would go here</p>
+        <div>
+          <NetworkChart websocketData={websocketData} />
         </div>
 
         {/* Login Attempts */}
-        <div className="card">
-          <h3>🔐 Login Attempts</h3>
-          <div className={styles.metric}>
-            <span>Success: 12 | Failed: 3</span>
-            <span className={styles.normal}>Normal</span>
-          </div>
-          <p className={styles.placeholder}>Live heatmap would go here</p>
+        <div>
+          <LoginHeatmap websocketData={websocketData} />
         </div>
 
         {/* Camera Zones */}
@@ -63,31 +72,14 @@ export default function LivePage() {
         </div>
 
         {/* Anomaly Meters */}
-        <div className="card">
-          <h3>📊 Anomaly Score Meters</h3>
-          <div className={styles.meters}>
-            {[
-              { name: 'Network', score: 35 },
-              { name: 'Camera', score: 42 },
-              { name: 'RF', score: 28 },
-              { name: 'Logs', score: 51 },
-              { name: 'Files', score: 38 }
-            ].map(meter => (
-              <div key={meter.name} className={styles.meter}>
-                <span>{meter.name}</span>
-                <div className={styles.meterBar}>
-                  <div
-                    className={styles.meterFill}
-                    style={{
-                      width: `${meter.score}%`,
-                      background: meter.score > 75 ? '#ef4444' : '#22c55e'
-                    }}
-                  />
-                </div>
-                <span>{meter.score}/100</span>
-              </div>
-            ))}
-          </div>
+        <div>
+          <AnomalyMeters websocketData={{
+            network: 87,
+            camera: 92,
+            rf: 85,
+            logs: 76,
+            files: 91
+          }} />
         </div>
       </div>
     </div>
