@@ -23,6 +23,7 @@ export default function CopilotPage() {
 
     try {
       const response = await copilotAPI.query(input)
+      console.log('Copilot response:', response)
       const assistantMessage = {
         role: 'assistant',
         content: response.response,
@@ -30,9 +31,11 @@ export default function CopilotPage() {
       }
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
+      console.error('Copilot error:', error)
+      console.error('Error details:', error.response?.data || error.message)
       const errorMessage = {
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please make sure the backend is running.'
+        content: `Error: ${error.response?.data?.detail || error.message || 'Unknown error'}. Please check browser console for details.`
       }
       setMessages(prev => [...prev, errorMessage])
     } finally {

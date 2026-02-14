@@ -37,7 +37,7 @@ export const incidentsAPI = {
 }
 
 export const copilotAPI = {
-  query: (question) => api.post('/copilot/query', { question })
+  query: (question) => api.post('/copilot/query', { question }, { timeout: 60000 }) // 60s timeout for LLM queries
 }
 
 export const liveAPI = {
