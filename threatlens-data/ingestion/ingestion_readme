@@ -1,0 +1,428 @@
+# ThreatLens AI - Batch 3: Ingestion Layer (P2 Handoff)
+
+## 🎯 Overview
+
+This batch contains **5 ingestion scripts** that feed data into the ThreatLens pipeline. Each script supports **BOTH real datasets AND synthetic data generation** for quick testing.
+
+**Your Role (P2)**: Data ingestion → Kafka topics  
+**Handoff To**: P3 (camera/sandbox/nlg services), P4 (ML models/training)
+
+---
+
+## 📦 Files in This Batch
+
+### **ingestion/** Directory (5 scripts)
+1. **`network_ingestion.py`** - Network traffic (NSL-KDD dataset OR synthetic flows)
+2. **`log_ingestion.py`** - System/auth logs (HDFS dataset OR synthetic logs)
+3. **`camera_ingestion.py`** - Video frames (RTSP/webcam/video file OR test mode)
+4. **`rf_ingestion.py`** - WiFi/BLE signals (synthetic only - no hardware needed)
+5. **`file_ingestion.py`** - File system monitoring (real-time watchdog)
+
+### **scripts/** Directory
+6. **`download_datasets.sh`** - Auto-downloads NSL-KDD + HDFS logs (optional)
+
+---
+
+## 🚀 Quick Start
+
+### **Option A: Synthetic Data (No Downloads - Fastest)**
+```bash
+# 1. Start Kafka
+docker-compose up -d
+
+# 2. Create Kafka topics
+python config/kafka_topics.py --create
+
+# 3. Run ingestion scripts in synthetic mode
+python ingestion/network_ingestion.py --mode synthetic --events 20 --attacks 0.2
+python ingestion/log_ingestion.py --mode synthetic --events 15 --attacks 0.15
+python ingestion/camera_ingestion.py --source test --camera cam-001 --zone server_room
+python ingestion/rf_ingestion.py --signals 20 --attacks 0.1
+python ingestion/file_ingestion.py --paths /tmp
+
+# ✅ Data now flowing to Kafka! Check topics:
+kafka-console-consumer --bootstrap-server localhost:9092 --topic raw-network-events --from-beginning
+```
+
+### **Option B: Real Datasets (Production Quality)**
+```bash
+# 1. Download datasets (~100MB total)
+bash scripts/download_datasets.sh
+
+# 2. Run with real data
+python ingestion/network_ingestion.py --mode dataset --path datasets/network/nsl-kdd/KDDTrain.txt
+python ingestion/log_ingestion.py --mode dataset --path datasets/logs/hdfs/HDFS_2k.log
+python ingestion/camera_ingestion.py --source datasets/camera/test_video.mp4
+python ingestion/rf_ingestion.py --synthetic  # Still synthetic (no hardware)
+python ingestion/file_ingestion.py --paths /tmp
+```
+
+---
+
+## 📋 Script Details
+
+### **1. network_ingestion.py** (Stage 1 - Network)
+**Purpose**: Reads network flows and sends to `raw-network-events` topic  
+**Handoff**: → P4's network anomaly models (Isolation Forest + Autoencoder)
+
+**Modes**:
+- **Synthetic**: Generates TCP/UDP flows with attacks (port scans, DoS, exfiltration, C2)
+- **Dataset**: Reads NSL-KDD dataset (41 features, attack labels)
+
+**Usage**:
+```bash
+# Synthetic: 20 events/batch, 30% attacks
+python ingestion/network_ingestion.py --mode synthetic --events 20 --attacks 0.3
+
+# Dataset: NSL-KDD file
+python ingestion/network_ingestion.py --mode dataset --path datasets/network/nsl-kdd/KDDTrain.txt --batches 10
+
+# Output to Kafka:
+{
+  "event_id": "uuid",
+  "timestamp": "2026-02-14T10:30:00Z",
+  "source_type": "network",
+  "host": "192.168.1.157",
+  "raw_data": {
+    "source_ip": "192.168.1.157",
+    "dest_ip": "203.0.113.5",
+    "protocol": "TCP",
+    "bytes_sent": 85000,
+    "bytes_received": 1200,
+    ...
+  }
+}
+```
+
+---
+
+### **2. log_ingestion.py** (Stage 1 - Logs)
+**Purpose**: Reads system logs and sends to `raw-log-events` topic  
+**Handoff**: → P4's log anomaly models (Random Forest + LSTM)
+
+**Modes**:
+- **Synthetic**: Generates SSH, sudo, service logs with attacks (brute force, privilege escalation)
+- **Dataset**: Reads HDFS log file with structured parsing
+
+**Usage**:
+```bash
+# Synthetic: 15 logs/batch, 20% attacks
+python ingestion/log_ingestion.py --mode synthetic --events 15 --attacks 0.2
+
+# Dataset: HDFS logs
+python ingestion/log_ingestion.py --mode dataset --path datasets/logs/hdfs/HDFS_2k.log
+
+# Output to Kafka:
+{
+  "event_id": "uuid",
+  "timestamp": "2026-02-14T10:30:05Z",
+  "source_type": "logs",
+  "host": "webserver-01",
+  "raw_data": {
+    "service": "sshd",
+    "level": "WARNING",
+    "user": "attacker",
+    "message": "Failed password for admin from 203.0.113.5",
+    ...
+  }
+}
+```
+
+---
+
+### **3. camera_ingestion.py** (Stage 1 - Camera)
+**Purpose**: Captures video frames and sends to `raw-camera-frames` topic  
+**Handoff**: → P3's camera_service (YOLOv8 + DeepSORT detection)
+
+**Modes**:
+- **Test**: Generates synthetic frames with text overlay
+- **Webcam**: Uses laptop camera (device 0)
+- **Video File**: Reads mp4/avi file
+- **RTSP**: IP camera stream
+
+**Usage**:
+```bash
+# Test mode (no camera needed)
+python ingestion/camera_ingestion.py --source test --camera cam-001 --zone server_room --fps 5
+
+# Webcam
+python ingestion/camera_ingestion.py --source 0 --camera cam-webcam --zone lobby --preview
+
+# Video file
+python ingestion/camera_ingestion.py --source /path/to/video.mp4 --camera cam-video
+
+# RTSP stream
+python ingestion/camera_ingestion.py --source rtsp://192.168.1.101:554/stream --camera cam-srv-001
+
+# Output to Kafka:
+{
+  "event_id": "uuid",
+  "timestamp": "2026-02-14T10:30:10Z",
+  "source_type": "camera",
+  "host": "cam-001",
+  "zone": "server_room",
+  "raw_data": {
+    "frame_base64": "<base64 encoded JPEG>",
+    "resolution": "1280x720",
+    "fps": 5,
+    ...
+  }
+}
+```
+
+---
+
+### **4. rf_ingestion.py** (Stage 1 - RF Signals)
+**Purpose**: Simulates WiFi/BLE beacons and sends to `raw-rf-signals` topic  
+**Handoff**: → P3's RF detector (whitelist check + z-score)
+
+**Mode**:
+- **Synthetic Only**: Generates authorized + rogue devices (no hardware needed)
+  - Authorized: From rf_whitelist.json
+  - Attacks: Rogue APs, evil twins, WiFi scanning, deauth floods
+
+**Usage**:
+```bash
+# Synthetic: 20 signals/batch, 10% attacks
+python ingestion/rf_ingestion.py --signals 20 --attacks 0.1
+
+# With custom whitelist
+python ingestion/rf_ingestion.py --whitelist config/rf_whitelist.json
+
+# Simulate deauth attack every 50 batches
+python ingestion/rf_ingestion.py --signals 20 --deauth-interval 50
+
+# Output to Kafka:
+{
+  "event_id": "uuid",
+  "timestamp": "2026-02-14T10:30:15Z",
+  "source_type": "rf",
+  "host": "AA:BB:CC:DD:EE:01",
+  "raw_data": {
+    "mac_address": "AA:BB:CC:DD:EE:01",
+    "device_type": "wifi_ap",
+    "signal_strength_dbm": -45.2,
+    "is_authorized": true,
+    ...
+  }
+}
+```
+
+---
+
+### **5. file_ingestion.py** (Stage 1 - File Monitoring)
+**Purpose**: Real-time file system monitoring, sends to `raw-file-events` topic  
+**Handoff**: → P3's file_detector (hash check + sandbox trigger)
+
+**Mode**:
+- **Real-time Only**: Uses Python watchdog to monitor directories
+  - Detects: created, modified, deleted, moved files
+  - Auto-sends suspicious files to `sandbox-queue` topic
+
+**Usage**:
+```bash
+# Monitor /tmp directory
+python ingestion/file_ingestion.py --paths /tmp
+
+# Monitor multiple paths (requires root for /etc)
+sudo python ingestion/file_ingestion.py --paths /etc /var/www/html /opt/app
+
+# Monitor without recursion
+python ingestion/file_ingestion.py --paths /tmp --no-recursive
+
+# Output to Kafka:
+{
+  "event_id": "uuid",
+  "timestamp": "2026-02-14T10:30:20Z",
+  "source_type": "file",
+  "host": "workstation-157",
+  "raw_data": {
+    "file_path": "/tmp/malware.exe",
+    "event_type": "created",
+    "file_hash": "sha256:abc123...",
+    "is_suspicious": true,
+    ...
+  }
+}
+# Also sends to sandbox-queue if suspicious!
+```
+
+---
+
+## 🔗 Data Flow to P3/P4
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  P2 INGESTION LAYER (Your Scripts)                         │
+├────────────────────────────────────────────────────────────┤
+│ network_ingestion.py  → raw-network-events                 │
+│ log_ingestion.py      → raw-log-events                     │
+│ camera_ingestion.py   → raw-camera-frames                  │
+│ rf_ingestion.py       → raw-rf-signals                     │
+│ file_ingestion.py     → raw-file-events + sandbox-queue    │
+└────────────────┬───────────────────────────────────────────┘
+                 │
+                 ▼
+        ┌────────────────┐
+        │  KAFKA TOPICS  │
+        └────────┬───────┘
+                 │
+        ┌────────┴────────────────────────┐
+        │                                  │
+        ▼                                  ▼
+┌───────────────┐                 ┌────────────────┐
+│  P4 ML MODELS │                 │  P3 SERVICES   │
+│ (Training)    │                 │ (Detection)    │
+├───────────────┤                 ├────────────────┤
+│ • IsolForest  │                 │ • Camera       │
+│ • Autoencoder │                 │ • Sandbox      │
+│ • RandomForest│                 │ • NLG          │
+│ • LSTM        │                 │ • Copilot      │
+└───────────────┘                 └────────────────┘
+```
+
+---
+
+## 📊 Dataset Information
+
+### **Network: NSL-KDD**
+- **Source**: https://github.com/defcom17/NSL_KDD
+- **Size**: ~75MB
+- **Format**: CSV with 41 features + attack label
+- **Download**: `wget https://github.com/defcom17/NSL_KDD/raw/master/KDDTrain%2B.txt`
+- **Used By**: P4 for training network models
+
+### **Logs: HDFS**
+- **Source**: https://github.com/logpai/loghub
+- **Size**: ~16MB
+- **Format**: Timestamped log messages
+- **Download**: `wget https://raw.githubusercontent.com/logpai/loghub/master/HDFS/HDFS_2k.log`
+- **Used By**: P4 for training log models
+
+### **Camera: YOLOv8 (Pre-trained)**
+- **Auto-downloads**: First run of P3's camera_service
+- **Size**: ~6MB
+- **No training needed**: Already trained on COCO dataset
+
+### **RF: Synthetic (No Dataset)**
+- Generated from `rf_whitelist.json`
+
+### **Files: Real-time (No Dataset)**
+- Monitors live file system
+
+---
+
+## ✅ Testing Checklist
+
+### **1. Verify Kafka Topics**
+```bash
+# List all topics (should see raw-network-events, raw-log-events, etc.)
+kafka-topics --bootstrap-server localhost:9092 --list
+
+# Consume from a topic
+kafka-console-consumer --bootstrap-server localhost:9092 \
+  --topic raw-network-events --from-beginning --max-messages 5
+```
+
+### **2. Run Each Ingestion Script**
+```bash
+# Network (1 minute test)
+timeout 60 python ingestion/network_ingestion.py --mode synthetic --events 10
+
+# Logs (1 minute test)
+timeout 60 python ingestion/log_ingestion.py --mode synthetic --events 10
+
+# Camera (100 frames)
+python ingestion/camera_ingestion.py --source test --max-frames 100
+
+# RF (1 minute test)
+timeout 60 python ingestion/rf_ingestion.py --signals 20
+
+# File (create test file while running)
+python ingestion/file_ingestion.py --paths /tmp &
+echo "test" > /tmp/test_file.txt  # Should trigger event
+```
+
+### **3. Verify Event Format**
+Each event should have this structure:
+```json
+{
+  "event_id": "uuid",
+  "timestamp": "ISO8601",
+  "source_type": "network|camera|rf|logs|file",
+  "host": "string",
+  "zone": "string",
+  "raw_data": {},
+  "anomaly_score": 0.0,
+  "severity": "low|medium|high|critical",
+  "dna_deviation_score": 0.0
+}
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### **Kafka Connection Error**
+```
+Error: NoBrokersAvailable
+Fix: docker-compose up -d  # Start Kafka
+```
+
+### **Dataset Not Found**
+```
+Error: FileNotFoundError: datasets/network/nsl-kdd/KDDTrain.txt
+Fix: bash scripts/download_datasets.sh
+```
+
+### **OpenCV Error (Camera)**
+```
+Error: Failed to open camera
+Fix: 
+  - Use --source test for synthetic frames
+  - Check webcam permissions
+  - Install: pip install opencv-python==4.9.0.80
+```
+
+### **File Permission Error**
+```
+Error: PermissionError: /etc
+Fix: sudo python ingestion/file_ingestion.py --paths /etc
+```
+
+---
+
+## 📤 Handoff to P3/P4
+
+**To P3 (Services)**:
+- Camera frames are in Kafka → you build YOLOv8 detector
+- Sandbox queue populated → you build sandbox executor
+- Events available → you build NLG + copilot
+
+**To P4 (ML Training)**:
+- Network data flowing → train Isolation Forest + Autoencoder
+- Log data flowing → train Random Forest + LSTM
+- Use data from Kafka or direct dataset files
+
+**Everyone**:
+- All data follows the normalized schema
+- Kafka topics are created and documented
+- Both synthetic and real data modes available
+
+---
+
+## 🎯 Success Criteria
+
+- [ ] All 5 scripts run without errors
+- [ ] Kafka topics receive messages
+- [ ] Event format validated
+- [ ] Synthetic mode works (no datasets)
+- [ ] Dataset mode works (with NSL-KDD + HDFS)
+- [ ] Camera test mode generates frames
+- [ ] RF signals include authorized + rogue
+- [ ] File monitoring detects changes
+- [ ] Suspicious files sent to sandbox-queue
+
+---
+
+**Your ingestion layer is complete! Ready to hand off to P3/P4.** 🚀

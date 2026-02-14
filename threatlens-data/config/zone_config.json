@@ -1,0 +1,306 @@
+{
+  "zones": [
+    {
+      "zone_id": "server_room",
+      "zone_name": "Server Room - Building A",
+      "cameras": [
+        {
+          "camera_id": "cam-srv-001",
+          "camera_name": "Server Room Main Entrance",
+          "rtsp_url": "rtsp://192.168.1.101:554/stream",
+          "resolution": "1280x720",
+          "fps": 5,
+          "location": {
+            "building": "A",
+            "floor": "2",
+            "coordinates": {"lat": 12.9716, "lon": 77.5946}
+          }
+        },
+        {
+          "camera_id": "cam-srv-002",
+          "camera_name": "Server Room Rack View",
+          "rtsp_url": "rtsp://192.168.1.102:554/stream",
+          "resolution": "1280x720",
+          "fps": 5,
+          "location": {
+            "building": "A",
+            "floor": "2",
+            "coordinates": {"lat": 12.9716, "lon": 77.5946}
+          }
+        }
+      ],
+      "zone_polygon": [
+        [100, 100],
+        [1180, 100],
+        [1180, 620],
+        [100, 620]
+      ],
+      "access_rules": {
+        "authorized_persons": ["person_001", "person_002", "person_005"],
+        "allowed_hours": {
+          "weekdays": {"start": "08:00", "end": "18:00"},
+          "weekends": {"start": "10:00", "end": "16:00"}
+        },
+        "max_occupancy": 3,
+        "require_badge": true,
+        "alert_on_unauthorized": true,
+        "alert_on_after_hours": true,
+        "alert_on_loitering_minutes": 30
+      },
+      "threat_level": "critical",
+      "contains_assets": ["primary_database_servers", "backup_systems", "network_core"]
+    },
+    {
+      "zone_id": "lobby",
+      "zone_name": "Main Lobby - Building A",
+      "cameras": [
+        {
+          "camera_id": "cam-lobby-001",
+          "camera_name": "Lobby Front Desk",
+          "rtsp_url": "rtsp://192.168.1.103:554/stream",
+          "resolution": "1920x1080",
+          "fps": 5,
+          "location": {
+            "building": "A",
+            "floor": "1",
+            "coordinates": {"lat": 12.9717, "lon": 77.5945}
+          }
+        }
+      ],
+      "zone_polygon": [
+        [200, 150],
+        [1720, 150],
+        [1720, 930],
+        [200, 930]
+      ],
+      "access_rules": {
+        "authorized_persons": [],
+        "allowed_hours": {
+          "weekdays": {"start": "06:00", "end": "22:00"},
+          "weekends": {"start": "08:00", "end": "20:00"}
+        },
+        "max_occupancy": 50,
+        "require_badge": false,
+        "alert_on_unauthorized": false,
+        "alert_on_after_hours": true,
+        "alert_on_loitering_minutes": 60
+      },
+      "threat_level": "low",
+      "contains_assets": ["reception_desk", "visitor_kiosk"]
+    },
+    {
+      "zone_id": "parking",
+      "zone_name": "Underground Parking - Building A",
+      "cameras": [
+        {
+          "camera_id": "cam-park-001",
+          "camera_name": "Parking Level B1 Entry",
+          "rtsp_url": "rtsp://192.168.1.104:554/stream",
+          "resolution": "1280x720",
+          "fps": 5,
+          "location": {
+            "building": "A",
+            "floor": "B1",
+            "coordinates": {"lat": 12.9715, "lon": 77.5946}
+          }
+        }
+      ],
+      "zone_polygon": [
+        [50, 50],
+        [1230, 50],
+        [1230, 670],
+        [50, 670]
+      ],
+      "access_rules": {
+        "authorized_persons": [],
+        "allowed_hours": {
+          "weekdays": {"start": "00:00", "end": "23:59"},
+          "weekends": {"start": "00:00", "end": "23:59"}
+        },
+        "max_occupancy": 20,
+        "require_badge": true,
+        "alert_on_unauthorized": false,
+        "alert_on_after_hours": false,
+        "alert_on_loitering_minutes": 120
+      },
+      "threat_level": "medium",
+      "contains_assets": ["vehicle_entry_gate", "cctv_nvr"]
+    },
+    {
+      "zone_id": "executive_floor",
+      "zone_name": "Executive Office Floor - Building A",
+      "cameras": [
+        {
+          "camera_id": "cam-exec-001",
+          "camera_name": "Executive Corridor",
+          "rtsp_url": "rtsp://192.168.1.105:554/stream",
+          "resolution": "1920x1080",
+          "fps": 5,
+          "location": {
+            "building": "A",
+            "floor": "5",
+            "coordinates": {"lat": 12.9718, "lon": 77.5947}
+          }
+        }
+      ],
+      "zone_polygon": [
+        [150, 120],
+        [1770, 120],
+        [1770, 960],
+        [150, 960]
+      ],
+      "access_rules": {
+        "authorized_persons": ["person_001", "person_003", "person_004", "person_007"],
+        "allowed_hours": {
+          "weekdays": {"start": "07:00", "end": "19:00"},
+          "weekends": {"start": "00:00", "end": "00:00"}
+        },
+        "max_occupancy": 10,
+        "require_badge": true,
+        "alert_on_unauthorized": true,
+        "alert_on_after_hours": true,
+        "alert_on_loitering_minutes": 15
+      },
+      "threat_level": "high",
+      "contains_assets": ["ceo_office", "financial_records", "strategic_documents"]
+    },
+    {
+      "zone_id": "research_lab",
+      "zone_name": "R&D Laboratory - Building B",
+      "cameras": [
+        {
+          "camera_id": "cam-lab-001",
+          "camera_name": "Lab Main Area",
+          "rtsp_url": "rtsp://192.168.1.106:554/stream",
+          "resolution": "1280x720",
+          "fps": 5,
+          "location": {
+            "building": "B",
+            "floor": "3",
+            "coordinates": {"lat": 12.9720, "lon": 77.5950}
+          }
+        }
+      ],
+      "zone_polygon": [
+        [80, 90],
+        [1200, 90],
+        [1200, 630],
+        [80, 630]
+      ],
+      "access_rules": {
+        "authorized_persons": ["person_006", "person_008", "person_009", "person_010"],
+        "allowed_hours": {
+          "weekdays": {"start": "08:00", "end": "20:00"},
+          "weekends": {"start": "10:00", "end": "18:00"}
+        },
+        "max_occupancy": 8,
+        "require_badge": true,
+        "alert_on_unauthorized": true,
+        "alert_on_after_hours": true,
+        "alert_on_loitering_minutes": 45
+      },
+      "threat_level": "critical",
+      "contains_assets": ["prototype_hardware", "intellectual_property", "research_data"]
+    }
+  ],
+  "person_database": [
+    {
+      "person_id": "person_001",
+      "name": "Admin User",
+      "role": "IT Administrator",
+      "department": "IT Operations",
+      "badge_id": "BADGE-001",
+      "access_level": "admin",
+      "authorized_zones": ["server_room", "executive_floor", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_002",
+      "name": "Network Engineer",
+      "role": "Senior Network Engineer",
+      "department": "IT Operations",
+      "badge_id": "BADGE-002",
+      "access_level": "engineer",
+      "authorized_zones": ["server_room", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_003",
+      "name": "CEO",
+      "role": "Chief Executive Officer",
+      "department": "Executive",
+      "badge_id": "BADGE-003",
+      "access_level": "executive",
+      "authorized_zones": ["executive_floor", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_004",
+      "name": "CFO",
+      "role": "Chief Financial Officer",
+      "department": "Executive",
+      "badge_id": "BADGE-004",
+      "access_level": "executive",
+      "authorized_zones": ["executive_floor", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_005",
+      "name": "Security Engineer",
+      "role": "Security Operations",
+      "department": "Security",
+      "badge_id": "BADGE-005",
+      "access_level": "security",
+      "authorized_zones": ["server_room", "lobby", "parking", "executive_floor"]
+    },
+    {
+      "person_id": "person_006",
+      "name": "Lead Researcher",
+      "role": "R&D Lead",
+      "department": "Research",
+      "badge_id": "BADGE-006",
+      "access_level": "research",
+      "authorized_zones": ["research_lab", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_007",
+      "name": "Executive Assistant",
+      "role": "Executive Support",
+      "department": "Executive",
+      "badge_id": "BADGE-007",
+      "access_level": "support",
+      "authorized_zones": ["executive_floor", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_008",
+      "name": "Research Scientist 1",
+      "role": "Senior Scientist",
+      "department": "Research",
+      "badge_id": "BADGE-008",
+      "access_level": "research",
+      "authorized_zones": ["research_lab", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_009",
+      "name": "Research Scientist 2",
+      "role": "Scientist",
+      "department": "Research",
+      "badge_id": "BADGE-009",
+      "access_level": "research",
+      "authorized_zones": ["research_lab", "lobby", "parking"]
+    },
+    {
+      "person_id": "person_010",
+      "name": "Lab Technician",
+      "role": "Laboratory Support",
+      "department": "Research",
+      "badge_id": "BADGE-010",
+      "access_level": "technician",
+      "authorized_zones": ["research_lab", "lobby", "parking"]
+    }
+  ],
+  "detection_settings": {
+    "person_confidence_threshold": 0.5,
+    "tracking_max_age": 30,
+    "min_detection_size": 50,
+    "enable_pose_estimation": false,
+    "enable_face_recognition": false,
+    "alert_cooldown_seconds": 60
+  }
+}

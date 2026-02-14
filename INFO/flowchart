@@ -1,0 +1,658 @@
+At a high level, ThreatLens takes raw signals from your environment, turns them into structured events, detects weird behavior, correlates it into attacks, collects proof, anchors that proof on-chain, explains what happened, and shows it all in a SOC dashboard.
+
+I’ll go block-by-block, explain what connects to what, what goes in, what comes out, and what the finished product “looks like” logically.
+
+***
+
+## 1. Data Sources → Message Broker
+
+**Blocks:**
+- Network Traffic (Zeek/pcap)
+- Camera Feeds (OpenCV + YOLOv8 later)
+- RF Signals (Kismet/SDR)
+- Device Logs (Syslog/Auth via Filebeat/Watchdog)
+
+**Connections:**
+- Each source sends events into **Kafka** (the message broker).
+
+**Inputs (from the real world):**
+- Network: raw packets or Zeek logs from your LAN.
+- Camera: RTSP video streams or files.
+- RF: radio activity (WiFi/Bluetooth/etc.).
+- Logs: auth logs, syslog, app logs, file integrity events.
+
+**Outputs into Kafka (per event):**
+Every source is normalized to a common JSON shape and pushed as a message, e.g.:
+
+```json
+{
+  "event_id": "uuid",
+  "source_type": "network | camera | rf | logs | file",
+  "timestamp": "ISO8601",
+  "host": "device identifier",
+  "raw_data": { ... source-specific fields ... },
+  "anomaly_score": 0.0,
+  "zone": "server_room | lobby | network_cabinet",
+  "severity": "low | medium | high | critical"
+}
+```
+
+**What this block is doing:**
+- Turning heterogeneous inputs into a **unified event stream**.
+- Kafka acts like a **central bus** that everyone downstream subscribes to.
+
+***
+
+## 2. Message Broker (Kafka) → Behavioral DNA Engine
+
+**Block:**
+- MESSAGE BROKER (Kafka)
+
+**Connection:**
+- DNA engine **consumes** normalized events from Kafka.
+
+**Inputs to DNA Engine:**
+For each event, you compute a feature vector per entity (device/user/zone):
+
+```json
+{
+  "event_id": "net-123",
+  "entity_id": "192.168.1.157",
+  "entity_type": "device | user | zone | camera_zone",
+  "source_type": "network | logs | camera | rf | file",
+  "timestamp": "2024-01-15T02:00:00Z",
+  "features": {
+    "metric_name": numeric_value
+  }
+}
+```
+
+Examples of `features`:
+- Device: average bytes per minute, number of unique destinations, CPU usage.
+- User: login hour, number of failed logins, commands run.
+- Camera zone: people count, time spent, movement speed.
+
+**Outputs from DNA Engine:**
+- Updated baselines for each metric (mean, std dev).
+- A **DNA deviation score** (z-score) for each event that feeds into later models.
+
+Conceptually, per entity you maintain:
+- `mean` and `std_dev` per metric (stored in DB).
+- For each new event: deviation \( z = (value - mean) / std\_dev \).
+
+**What this block is doing:**
+- Learning **what “normal” looks like** for each device/user/zone.
+- Producing **dna_deviation_score** that later models use to detect subtle anomalies.
+
+***
+
+## 3. Behavioral DNA Engine → Per-Source AI Anomaly Detection
+
+**Block:**
+- PER-SOURCE AI ANOMALY DETECTION
+
+**Connection:**
+- Each AI model subscribes to its source’s Kafka topic (or processed streams), uses the DNA deviation features, and outputs an anomaly score.
+
+I’ll go source-by-source.
+
+### 3A. Network Anomaly Detection
+
+**Input:**
+A 20-feature vector per network flow:
+
+```text
+[
+  bytes_sent_normalized,
+  bytes_received_normalized,
+  duration_normalized,
+  packet_rate_normalized,
+  dst_port_normalized,
+  protocol_encoded,
+  hour_of_day_normalized,
+  dst_ip_reputation_score,
+  src_ip_internal_flag,
+  connection_state_encoded,
+  packets_sent_normalized,
+  packets_received_normalized,
+  bytes_ratio,
+  packet_size_mean,
+  dna_deviation_score_normalized,
+  is_known_destination,
+  service_encoded,
+  ttl_normalized,
+  jitter_normalized,
+  inter_packet_time_normalized
+]
+```
+
+Models:
+- Isolation Forest
+- Autoencoder
+
+**Output (logical):**
+For each flow, you get:
+- anomaly_score 0–100
+- possibly a label like `normal/suspicious/malicious` (internally)
+- these are then sent as enriched events into Kafka (e.g. `network-anomaly-scores` topic).
+
+### 3B. Log Anomaly Detection
+
+**Input for Random Forest (single event):**
+
+```text
+[
+  event_type_encoded,
+  hour_of_day,
+  day_of_week,
+  failed_logins_last_5min,
+  is_new_source_ip,
+  privilege_level,
+  command_risk_score,
+  is_first_time_user_host,
+  time_since_last_event_sec,
+  process_whitelisted,
+  destination_ip_internal,
+  auth_method_encoded,
+  dna_deviation_score,
+  consecutive_failures,
+  session_duration_seconds
+]
+```
+
+**Input for LSTM (sequence model):**
+- A sequence of 10 such vectors:
+
+```text
+[
+  log_features_t-9,
+  ...,
+  log_features_t
+]  # shape: (1, 10, 15)
+```
+
+**Output:**
+- anomaly_score 0–100 per event/sequence, then publish enriched log events to Kafka (`log-anomaly-scores`).
+
+### 3C. Camera Anomaly Detection
+
+**Inputs:**
+1) Raw frame from Kafka:
+
+- `frame`: numpy array `(720, 1280, 3)` BGR
+
+2) Zone configuration:
+
+```json
+{
+  "zone_name": {
+    "polygon": [[x,y], ...],
+    "permitted_hours": [start_hour, end_hour],
+    "max_persons": integer,
+    "requires_badge": boolean
+  }
+}
+```
+
+Pipeline:
+- YOLOv8n → person bounding boxes.
+- DeepSORT → tracking `track_id` per person.
+- Rule engine → checks zones, time, loitering, crowding.
+
+**Output (Kafka: `camera-anomaly-scores`):**
+
+```json
+{
+  "event_id": "string",
+  "source_type": "camera",
+  "timestamp": "ISO8601",
+  "anomaly_score": 0-100,
+  "persons_detected": integer,
+  "tracked_persons": [
+    {
+      "track_id": "string",
+      "bounding_box": [x1,y1,x2,y2],
+      "confidence": float,
+      "zone": "string",
+      "violations": ["string"],
+      "time_in_zone_minutes": float
+    }
+  ],
+  "zone_violations": boolean,
+  "violation_types": ["string"],
+  "permitted_hours": "HH:MM-HH:MM",
+  "current_time": "HH:MM",
+  "annotated_frame_path": "path",
+  "raw_frame_path": "path"
+}
+```
+
+### 3D. RF Anomaly Detection
+
+**Input:**
+
+```json
+{
+  "mac_address": "AA:BB:CC:DD:EE:FF",
+  "signal_type": "wifi",
+  "frequency_mhz": 2437,
+  "signal_strength_dbm": -45,
+  "zone": "server_room"
+}
+```
+
+**Output:**
+- anomaly_score based on whitelist and signal behavior (e.g. new MAC, jamming).
+- Published as `rf-anomaly-scores` with fields like `device_mac`, `violation`, etc.
+
+### 3E. File Integrity Anomaly Detection
+
+**Input:**
+
+```json
+{
+  "file_path": "/var/db/customer_data.sql",
+  "event_type": "modified",
+  "old_extension": ".sql",
+  "new_extension": ".encrypted",
+  "process_responsible": "unknown_binary.exe",
+  "file_size_bytes": 2400000,
+  "modifications_last_60s": 847,
+  "unique_extensions_changed": 12,
+  "hour_of_day": 2
+}
+```
+
+**Output:**
+- anomaly_score 0–100
+- flags like `mass_encryption`, `suspicious_extension`
+- published as `file-anomaly-scores`, possibly triggering the sandbox.
+
+**What this whole block is doing:**
+- Each source gets **its own specialized anomaly detector**.
+- Output is anomaly-scored events that are still tied to the original event IDs + metadata, now with risk context.
+
+***
+
+## 4. Per-Source Detection → Cross-Domain Correlation Engine
+
+**Block:**
+- CROSS-DOMAIN CORRELATION ENGINE
+
+**Connection:**
+- Consumes anomaly-scored events from all sources (network, camera, rf, logs, file, sandbox).
+- Uses a sliding time window to group events.
+
+**Input (Correlation Window):**
+
+```json
+{
+  "window_id": "WIN-2024-001",
+  "window_start": "2024-01-15T02:00:00Z",
+  "window_end": "2024-01-15T02:15:00Z",
+  "events": [
+    {
+      "event_id": "cam-550e8401",
+      "source": "camera",
+      "score": 92,
+      "timestamp": "02:03:12"
+      // plus other source-specific data if needed
+    }
+  ]
+}
+```
+
+Internally, it uses:
+
+- Rule engine (like your `CORRELATION_RULES` examples).
+- Random Forest for intent classification.
+- Markov chain for predicting next attack stage.
+
+**Outputs from this block:**
+- **Correlated incident objects** that represent a multi-stage attack, e.g.:
+
+```json
+{
+  "incident_id": "INC-2024-0001",
+  "risk_score": 94,
+  "severity": "CRITICAL",
+  "intent": "data_exfiltration",
+  "window_id": "WIN-2024-001",
+  "window_start": "...",
+  "window_end": "...",
+  "correlated_events": [ ... list of linked events from all sources ... ],
+  "mitre_ttps": ["T1078", "T1041"],
+  "predicted_next_move": "Attacker may attempt lateral movement",
+  "graph_nodes": [...],
+  "graph_edges": [...]
+}
+```
+
+This incident is:
+- Written into **Neo4j** as nodes and edges (for the attack graph).
+- Pushed into Kafka for downstream blocks (e.g. evidence capture, NLG, XAI).
+
+**What this block is doing:**
+- Turn siloed “weird events” into a **story**: “this is a coordinated Ransomware deployment / Data Exfiltration / APT, and here are the steps.”
+
+***
+
+## 5. Correlation Engine → Evidence Capture + Sandbox Detonation
+
+These two hang off the correlated incidents and specific high-risk file events.
+
+### 5A. Evidence Capture
+
+**Input (from correlation engine):**
+
+```json
+{
+  "incident_id": "string",
+  "correlated_events": [...],
+  "timestamp_range": {
+    "start": "ISO8601",
+    "end": "ISO8601"
+  },
+  "sources_involved": ["camera","logs","file","network"],
+  "zone": "string"
+}
+```
+
+**What it does:**
+- For the given incident, fetch:
+  - Camera clips around the event.
+  - Log snippets.
+  - Network packets.
+  - File snapshots.
+
+**Output (Kafka: `evidence-manifest`):**
+
+```json
+{
+  "incident_id": "string",
+  "capture_timestamp": "ISO8601",
+  "evidence": {
+    "camera": {
+      "video_clip": "path",
+      "annotated_frames": ["path"],
+      "clip_duration_seconds": integer
+    },
+    "logs": {
+      "log_snippet_path": "path",
+      "event_count": integer,
+      "time_range": "string"
+    },
+    "network": {
+      "pcap_path": "path",
+      "packets_captured": integer,
+      "flow_summary": "string"
+    },
+    "files": {
+      "suspicious_file": "path",
+      "sha256": "string",
+      "original_path": "path"
+    }
+  },
+  "total_size_mb": float,
+  "ready_for_blockchain": boolean
+}
+```
+
+### 5B. Sandbox Detonation
+
+**Trigger:**
+- High anomaly file events (e.g. mass encryption), or correlation rules.
+
+**Input:**
+
+```json
+{
+  "incident_id": "string",
+  "file_to_detonate": "path",
+  "file_hash": "sha256",
+  "file_type": "string",
+  "trigger_reason": "string"
+}
+```
+
+The sandbox runs the file in an isolated Docker container and collects behavior logs.
+
+**Behavioral Log Input to Classifier (inside sandbox):**
+
+```json
+{
+  "files_encrypted": integer,
+  "ransom_note_created": boolean,
+  "network_connections": boolean,
+  "persistence_mechanisms": boolean,
+  "shadow_copies_deleted": boolean,
+  "processes_spawned_suspicious": boolean
+}
+```
+
+**Output (Kafka: `sandbox-results`):**
+
+```json
+{
+  "incident_id": "string",
+  "file_hash": "sha256",
+  "verdict": "MALICIOUS | SUSPICIOUS | BENIGN",
+  "confidence_score": integer,
+  "detonation_duration_seconds": integer,
+  "behavioral_summary": {
+    "files_created": ["path"],
+    "files_encrypted": integer,
+    "registry_modified": ["string"],
+    "shadow_copies_deleted": boolean,
+    "processes_spawned": ["string"],
+    "network_connections_attempted": [
+      {"ip": "string", "port": integer, "domain": "string"}
+    ]
+  },
+  "extracted_iocs": {
+    "ips": ["string"],
+    "domains": ["string"],
+    "file_hashes": ["sha256"],
+    "registry_keys": ["string"],
+    "mitre_behaviors": ["Txxxx"]
+  },
+  "screenshot_sequence": ["path"]
+}
+```
+
+**What these blocks are doing:**
+- Evidence capture: assembling a **forensic package** per incident.
+- Sandbox: turning a suspicious file into a **behavioral verdict + IOCs**.
+
+***
+
+## 6. Evidence Manifest → Blockchain Evidence Anchoring
+
+**Block:**
+- BLOCKCHAIN EVIDENCE ANCHORING (Polygon)
+
+**Connection:**
+- Consumes `evidence-manifest` and computes a hash for each evidence item.
+
+**Input:**
+- Paths/hashes from the manifest (files in MinIO or similar).
+
+**Workflow:**
+1. Compute SHA-256 over each evidence artifact (or over a manifest file).
+2. Call a smart contract like:
+
+```solidity
+function registerEvidence(bytes32 evidenceHash) external {
+    evidenceTimestamps[evidenceHash] = block.timestamp;
+}
+```
+
+**Output:**
+- A blockchain receipt stored alongside evidence, e.g.:
+
+```json
+{
+  "incident_id": "string",
+  "evidence_hash": "sha256",
+  "transaction_hash": "0x...",
+  "block_number": 1234567,
+  "timestamp": "ISO8601"
+}
+```
+
+This is later used by the dashboard to show a **“Verified on chain”** badge.
+
+**What this block is doing:**
+- Making your evidence **tamper-evident and legally defensible** by anchoring it on Polygon.
+
+***
+
+## 7. Correlated Incident + SHAP + Sandbox + DNA → XAI Module & NLG
+
+There are two subparts: SHAP + NLG.
+
+### 7A. SHAP Explainability
+
+**Input:**
+- `feature_vector_used_for_prediction` (the same features the ML model used).
+- Model predictions.
+
+**Output:**
+- SHAP values per feature, e.g. “failed_logins_last_5min contributed +0.25 to risk”.
+
+Those get stored and later visualized as bar charts in the dashboard.
+
+### 7B. NLG Explanation Generator
+
+**Input:**
+
+```json
+{
+  "incident": "full correlated incident JSON",
+  "shap_explanations": "SHAP outputs",
+  "sandbox_result": "sandbox result JSON (optional)",
+  "dna_deviations": "Stage 2 deviation data"
+}
+```
+
+**Output (Kafka: `nlg-explanations`):**
+
+```json
+{
+  "incident_id": "string",
+  "risk_score": integer,
+  "severity": "LOW | MEDIUM | HIGH | CRITICAL",
+  "intent": "string",
+  "summary": "string",
+  "sections": [
+    {
+      "source": "string",
+      "score": integer,
+      "icon": "string",
+      "text": "string",
+      "key_factors": ["string"]
+    }
+  ],
+  "correlation_statement": "string",
+  "mitre_statement": "string",
+  "sandbox_statement": "string",
+  "prediction_statement": "string",
+  "recommended_actions": ["string"]
+}
+```
+
+**What this block is doing:**
+- Turning all the raw scores + graphs + DNA deviations into a **human-readable incident explanation** and recommended actions.
+
+***
+
+## 8. Events + Incidents + Evidence → SOC Dashboard
+
+**Block:**
+- SOC DASHBOARD
+
+**Connection:**
+- Subscribes (via backend + WebSockets/API) to:
+  - per-source anomalies
+  - correlated incidents
+  - evidence manifests
+  - sandbox results
+  - NLG explanations
+  - blockchain verification status
+
+**Pages/Outputs:**
+
+1. **Alert Feed**
+   - Input: list of incidents (risk_score, intent, timestamp).
+   - Shows a **real-time list of alerts** sorted by severity.
+
+2. **Incident Detail**
+   - Input: one incident JSON + evidence + SHAP + sandbox + blockchain info.
+   - Shows:
+     - Risk gauge, severity, intent.
+     - Timeline of events.
+     - Causal attack graph (from Neo4j).
+     - Evidence gallery (images, videos, logs, PCAPs).
+     - Sandbox screenshots + verdict.
+     - XAI section (SHAP bars + NLG explanation).
+     - Blockchain badge (block #, tx hash).
+
+3. **Live Monitoring**
+   - Input: streaming anomalies/metrics.
+   - Shows live charts for network usage, login attempts, camera zones, RF devices, file modifications.
+
+4. **SOC Copilot**
+   - Input: Analyst question + retrieved context from Elasticsearch (events + incidents).
+   - LLM gets:
+
+     - Question (string)
+     - Context:
+
+       ```json
+       {
+         "hits": [
+           {
+             "timestamp": "ISO8601",
+             "zone": "string",
+             "anomaly_score": integer,
+             "event_data": {...}
+           }
+         ]
+       }
+       ```
+
+   - Output:
+
+     ```json
+     {
+       "question": "string",
+       "response": "LLM generated summary",
+       "supporting_incident_ids": ["string"],
+       "evidence_links": ["path"],
+       "confidence": "high | medium | low"
+     }
+     ```
+
+   - Shown in a chat-like UI.
+
+5. **Threat Intelligence**
+   - Input: sandbox IOCs, MITRE mappings, source IPs.
+   - Shows heatmaps, distributions, maps.
+
+**What the finished product outputs overall:**
+
+- For every suspicious pattern, the system outputs:
+  1. **A scored incident** with:
+     - Risk score, severity, intent, predicted next move.
+  2. **A visual attack path** (graph) of how different events are linked.
+  3. **Evidence bundle**: camera clips, screenshots, logs, PCAPs, file copies.
+  4. **On-chain verification** that evidence hasn’t been tampered.
+  5. **Explainability**:
+     - Why it triggered (top features, DNA deviations).
+     - A natural language explanation and recommended actions.
+  6. **Interactive investigation support**:
+     - SOC Copilot answering “What happened in zone A last night?” using your real data.
+     - Real-time dashboards for monitoring.
+
+In simple terms:  
+Raw signals → normalized events → per-source anomaly scores → multi-source correlated attack stories → evidence & verdicts → blockchain anchoring → human-readable explanations → SOC UI where an analyst can see everything, replay what happened, and ask questions conversationally.

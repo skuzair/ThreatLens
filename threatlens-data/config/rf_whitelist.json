@@ -1,0 +1,176 @@
+{
+  "whitelist_version": "1.0",
+  "last_updated": "2026-02-14T00:00:00Z",
+  "auto_learning_enabled": false,
+  "authorized_devices": [
+    {
+      "mac_address": "AA:BB:CC:DD:EE:01",
+      "device_type": "wifi_ap",
+      "vendor": "Cisco",
+      "model": "Catalyst 9120AXI",
+      "description": "Main Office Access Point - Floor 1",
+      "location": "Building A, Floor 1",
+      "expected_signal_range": {
+        "min_dbm": -70,
+        "max_dbm": -30
+      },
+      "first_seen": "2025-06-15T10:00:00Z",
+      "owner": "IT Department",
+      "criticality": "high"
+    },
+    {
+      "mac_address": "AA:BB:CC:DD:EE:02",
+      "device_type": "wifi_ap",
+      "vendor": "Cisco",
+      "model": "Catalyst 9120AXI",
+      "description": "Server Room Access Point - Floor 2",
+      "location": "Building A, Floor 2",
+      "expected_signal_range": {
+        "min_dbm": -65,
+        "max_dbm": -25
+      },
+      "first_seen": "2025-06-15T10:15:00Z",
+      "owner": "IT Department",
+      "criticality": "critical"
+    },
+    {
+      "mac_address": "AA:BB:CC:DD:EE:03",
+      "device_type": "ble_beacon",
+      "vendor": "Estimote",
+      "model": "Location Beacon",
+      "description": "Entrance Proximity Beacon",
+      "location": "Building A, Main Entrance",
+      "expected_signal_range": {
+        "min_dbm": -80,
+        "max_dbm": -40
+      },
+      "first_seen": "2025-07-01T09:00:00Z",
+      "owner": "Security Department",
+      "criticality": "medium"
+    },
+    {
+      "mac_address": "11:22:33:44:55:01",
+      "device_type": "laptop",
+      "vendor": "Dell",
+      "model": "Latitude 7430",
+      "description": "IT Admin Laptop",
+      "location": "Mobile",
+      "expected_signal_range": {
+        "min_dbm": -75,
+        "max_dbm": -30
+      },
+      "first_seen": "2025-06-20T08:00:00Z",
+      "owner": "person_001",
+      "criticality": "high"
+    },
+    {
+      "mac_address": "11:22:33:44:55:02",
+      "device_type": "mobile",
+      "vendor": "Apple",
+      "model": "iPhone 14 Pro",
+      "description": "CEO Mobile Device",
+      "location": "Mobile",
+      "expected_signal_range": {
+        "min_dbm": -80,
+        "max_dbm": -35
+      },
+      "first_seen": "2025-06-18T07:30:00Z",
+      "owner": "person_003",
+      "criticality": "high"
+    },
+    {
+      "mac_address": "11:22:33:44:55:03",
+      "device_type": "iot_sensor",
+      "vendor": "Raspberry Pi",
+      "model": "RPi 4B",
+      "description": "Temperature Sensor - Server Room",
+      "location": "Building A, Floor 2, Server Room",
+      "expected_signal_range": {
+        "min_dbm": -60,
+        "max_dbm": -30
+      },
+      "first_seen": "2025-08-01T14:00:00Z",
+      "owner": "IT Department",
+      "criticality": "low"
+    },
+    {
+      "mac_address": "11:22:33:44:55:04",
+      "device_type": "printer",
+      "vendor": "HP",
+      "model": "LaserJet Enterprise M607",
+      "description": "Executive Floor Printer",
+      "location": "Building A, Floor 5",
+      "expected_signal_range": {
+        "min_dbm": -70,
+        "max_dbm": -35
+      },
+      "first_seen": "2025-06-22T11:00:00Z",
+      "owner": "IT Department",
+      "criticality": "medium"
+    },
+    {
+      "mac_address": "AA:BB:CC:DD:EE:04",
+      "device_type": "wifi_ap",
+      "vendor": "Ubiquiti",
+      "model": "UniFi AP AC Pro",
+      "description": "Research Lab Access Point",
+      "location": "Building B, Floor 3",
+      "expected_signal_range": {
+        "min_dbm": -68,
+        "max_dbm": -28
+      },
+      "first_seen": "2025-07-10T13:00:00Z",
+      "owner": "IT Department",
+      "criticality": "high"
+    },
+    {
+      "mac_address": "11:22:33:44:55:05",
+      "device_type": "badge_reader",
+      "vendor": "HID Global",
+      "model": "iCLASS SE R40",
+      "description": "Server Room Badge Reader",
+      "location": "Building A, Floor 2, Server Room Entrance",
+      "expected_signal_range": {
+        "min_dbm": -55,
+        "max_dbm": -25
+      },
+      "first_seen": "2025-06-15T10:00:00Z",
+      "owner": "Security Department",
+      "criticality": "critical"
+    }
+  ],
+  "detection_settings": {
+    "signal_strength_threshold_dbm": -90,
+    "unknown_device_alert_threshold": 3,
+    "signal_anomaly_stddev_multiplier": 3.0,
+    "scan_interval_seconds": 5,
+    "device_timeout_seconds": 300,
+    "enable_vendor_lookup": true,
+    "block_unknown_devices": false
+  },
+  "vendor_oui_prefixes": {
+    "AA:BB:CC": "Cisco Systems",
+    "11:22:33": "Generic Devices",
+    "00:1A:2B": "Apple Inc.",
+    "00:50:56": "VMware Inc.",
+    "B8:27:EB": "Raspberry Pi Foundation",
+    "DC:A6:32": "Raspberry Pi Trading"
+  },
+  "threat_indicators": {
+    "rogue_ap_ssids": [
+      "Free_WiFi",
+      "Guest_Network",
+      "Corp_WiFi_Backup",
+      "IT_Support"
+    ],
+    "suspicious_vendors": [
+      "Pineapple",
+      "WiFi Pineapple",
+      "Hak5"
+    ],
+    "signal_strength_attack_patterns": {
+      "deauth_flood_threshold": 100,
+      "rapid_association_threshold": 50
+    }
+  }
+}
