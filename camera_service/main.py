@@ -14,6 +14,16 @@ import numpy as np
 import cv2
 from kafka import KafkaConsumer, KafkaProducer
 
+# DNA enrichment — path goes up to threatlens-data/processing
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "threatlens-data", "processing")))
+try:
+    from dna_integration import enrich_with_dna
+    DNA_AVAILABLE = True
+except Exception as e:
+    DNA_AVAILABLE = False
+    print(f"DNA not available: {e}")
+
 try:
     from ultralytics import YOLO
     YOLO_AVAILABLE = True
@@ -149,6 +159,10 @@ if __name__ == "__main__":
                     logger.warning(f"Frame {frame_count} | Skipped — invalid frame")
                     continue
 
+                # ── DNA enrichment ────────────────────────────────────
+                if DNA_AVAILABLE:
+                    output = enrich_with_dna(output, source_type="camera")
+
                 producer.send(CAMERA_ANOMALY_TOPIC, output)
                 producer.flush()
 
@@ -167,10 +181,12 @@ if __name__ == "__main__":
                 else:
                     indicator = "🟢 LOW     "
 
+                dna_score = output.get("dna_deviation_score", 0.0)
                 logger.info(
                     f"Frame #{frame_count:04d} | "
                     f"{indicator} | "
                     f"Score: {score:5.1f}/100 | "
+                    f"DNA: {dna_score:5.1f} | "
                     f"Persons: {persons} | "
                     f"Zone: {zone} | "
                     f"ID: {event_id}..."

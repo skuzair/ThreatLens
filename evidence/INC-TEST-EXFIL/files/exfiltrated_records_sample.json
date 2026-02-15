@@ -1,0 +1,252 @@
+[
+  {
+    "id": 0,
+    "category": "PII",
+    "value": "cfcd208495d565ef66e7dff9f98764da"
+  },
+  {
+    "id": 1,
+    "category": "PII",
+    "value": "c4ca4238a0b923820dcc509a6f75849b"
+  },
+  {
+    "id": 2,
+    "category": "PII",
+    "value": "c81e728d9d4c2f636f067f89cc14862c"
+  },
+  {
+    "id": 3,
+    "category": "PII",
+    "value": "eccbc87e4b5ce2fe28308fd9f2a7baf3"
+  },
+  {
+    "id": 4,
+    "category": "PII",
+    "value": "a87ff679a2f3e71d9181a67b7542122c"
+  },
+  {
+    "id": 5,
+    "category": "PII",
+    "value": "e4da3b7fbbce2345d7772b0674a318d5"
+  },
+  {
+    "id": 6,
+    "category": "PII",
+    "value": "1679091c5a880faf6fb5e6087eb1b2dc"
+  },
+  {
+    "id": 7,
+    "category": "PII",
+    "value": "8f14e45fceea167a5a36dedd4bea2543"
+  },
+  {
+    "id": 8,
+    "category": "PII",
+    "value": "c9f0f895fb98ab9159f51fd0297e236d"
+  },
+  {
+    "id": 9,
+    "category": "PII",
+    "value": "45c48cce2e2d7fbdea1afc51c7c6ad26"
+  },
+  {
+    "id": 10,
+    "category": "PII",
+    "value": "d3d9446802a44259755d38e6d163e820"
+  },
+  {
+    "id": 11,
+    "category": "PII",
+    "value": "6512bd43d9caa6e02c990b0a82652dca"
+  },
+  {
+    "id": 12,
+    "category": "PII",
+    "value": "c20ad4d76fe97759aa27a0c99bff6710"
+  },
+  {
+    "id": 13,
+    "category": "PII",
+    "value": "c51ce410c124a10e0db5e4b97fc2af39"
+  },
+  {
+    "id": 14,
+    "category": "PII",
+    "value": "aab3238922bcc25a6f606eb525ffdc56"
+  },
+  {
+    "id": 15,
+    "category": "PII",
+    "value": "9bf31c7ff062936a96d3c8bd1f8f2ff3"
+  },
+  {
+    "id": 16,
+    "category": "PII",
+    "value": "c74d97b01eae257e44aa9d5bade97baf"
+  },
+  {
+    "id": 17,
+    "category": "PII",
+    "value": "70efdf2ec9b086079795c442636b55fb"
+  },
+  {
+    "id": 18,
+    "category": "PII",
+    "value": "6f4922f45568161a8cdf4ad2299f6d23"
+  },
+  {
+    "id": 19,
+    "category": "PII",
+    "value": "1f0e3dad99908345f7439f8ffabdffc4"
+  },
+  {
+    "id": 20,
+    "category": "PII",
+    "value": "98f13708210194c475687be6106a3b84"
+  },
+  {
+    "id": 21,
+    "category": "PII",
+    "value": "3c59dc048e8850243be8079a5c74d079"
+  },
+  {
+    "id": 22,
+    "category": "PII",
+    "value": "b6d767d2f8ed5d21a44b0e5886680cb9"
+  },
+  {
+    "id": 23,
+    "category": "PII",
+    "value": "37693cfc748049e45d87b8c7d8b9aacd"
+  },
+  {
+    "id": 24,
+    "category": "PII",
+    "value": "1ff1de774005f8da13f42943881c655f"
+  },
+  {
+    "id": 25,
+    "category": "PII",
+    "value": "8e296a067a37563370ded05f5a3bf3ec"
+  },
+  {
+    "id": 26,
+    "category": "PII",
+    "value": "4e732ced3463d06de0ca9a15b6153677"
+  },
+  {
+    "id": 27,
+    "category": "PII",
+    "value": "02e74f10e0327ad868d138f2b4fdd6f0"
+  },
+  {
+    "id": 28,
+    "category": "PII",
+    "value": "33e75ff09dd601bbe69f351039152189"
+  },
+  {
+    "id": 29,
+    "category": "PII",
+    "value": "6ea9ab1baa0efb9e19094440c317e21b"
+  },
+  {
+    "id": 30,
+    "category": "PII",
+    "value": "34173cb38f07f89ddbebc2ac9128303f"
+  },
+  {
+    "id": 31,
+    "category": "PII",
+    "value": "c16a5320fa475530d9583c34fd356ef5"
+  },
+  {
+    "id": 32,
+    "category": "PII",
+    "value": "6364d3f0f495b6ab9dcf8d3b5c6e0b01"
+  },
+  {
+    "id": 33,
+    "category": "PII",
+    "value": "182be0c5cdcd5072bb1864cdee4d3d6e"
+  },
+  {
+    "id": 34,
+    "category": "PII",
+    "value": "e369853df766fa44e1ed0ff613f563bd"
+  },
+  {
+    "id": 35,
+    "category": "PII",
+    "value": "1c383cd30b7c298ab50293adfecb7b18"
+  },
+  {
+    "id": 36,
+    "category": "PII",
+    "value": "19ca14e7ea6328a42e0eb13d585e4c22"
+  },
+  {
+    "id": 37,
+    "category": "PII",
+    "value": "a5bfc9e07964f8dddeb95fc584cd965d"
+  },
+  {
+    "id": 38,
+    "category": "PII",
+    "value": "a5771bce93e200c36f7cd9dfd0e5deaa"
+  },
+  {
+    "id": 39,
+    "category": "PII",
+    "value": "d67d8ab4f4c10bf22aa353e27879133c"
+  },
+  {
+    "id": 40,
+    "category": "PII",
+    "value": "d645920e395fedad7bbbed0eca3fe2e0"
+  },
+  {
+    "id": 41,
+    "category": "PII",
+    "value": "3416a75f4cea9109507cacd8e2f2aefc"
+  },
+  {
+    "id": 42,
+    "category": "PII",
+    "value": "a1d0c6e83f027327d8461063f4ac58a6"
+  },
+  {
+    "id": 43,
+    "category": "PII",
+    "value": "17e62166fc8586dfa4d1bc0e1742c08b"
+  },
+  {
+    "id": 44,
+    "category": "PII",
+    "value": "f7177163c833dff4b38fc8d2872f1ec6"
+  },
+  {
+    "id": 45,
+    "category": "PII",
+    "value": "6c8349cc7260ae62e3b1396831a8398f"
+  },
+  {
+    "id": 46,
+    "category": "PII",
+    "value": "d9d4f495e875a2e075a1a4a6e1b9770f"
+  },
+  {
+    "id": 47,
+    "category": "PII",
+    "value": "67c6a1e7ce56d3d6fa748ab6d9af3fd7"
+  },
+  {
+    "id": 48,
+    "category": "PII",
+    "value": "642e92efb79421734881b53e1e1b18b6"
+  },
+  {
+    "id": 49,
+    "category": "PII",
+    "value": "f457c545a9ded88f18ecee47145a72c0"
+  }
+]

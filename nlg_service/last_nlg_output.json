@@ -1,0 +1,76 @@
+{
+  "incident_id": "INC-TEST-RANSOMWARE",
+  "risk_score": 95.0,
+  "severity": "CRITICAL",
+  "intent": "ransomware",
+  "summary": "CRITICAL: Coordinated ransomware attack detected. Risk score 95.0/100.",
+  "sections": [
+    {
+      "source": "File Integrity",
+      "icon": "file-warning",
+      "score": 95,
+      "text": "160 files in /sandbox/victim_files/ encrypted within 45 seconds by process payload.py (sandboxed \u2014 MALICIOUS). 160 files renamed with .locked extension \u2014 AES-256 encryption confirmed by sandbox.",
+      "key_factors": [
+        "has_ransomware_pattern",
+        "has_file_source",
+        "privilege_escalation"
+      ]
+    },
+    {
+      "source": "Network",
+      "icon": "network",
+      "score": 78,
+      "text": "Outbound transfer of 0.5GB to 185.220.101.47 at 2026-02-15T14:31:00Z. Destination has known Tor exit node \u2014 threat intel match. Transfer volume is 12x the baseline. Traffic pattern matches C2 beacon + key exchange.",
+      "key_factors": [
+        "has_ransomware_pattern",
+        "has_file_source",
+        "privilege_escalation"
+      ]
+    }
+  ],
+  "correlation_statement": "All 2 events occurred within a 1-minute window. Temporal sequence (file encryption \u2192 exfiltration) matches ransomware impact attack pattern.",
+  "mitre_statement": "Matches T1486 (Data Encrypted for Impact) + T1490 (Inhibit System Recovery) + T1070 (Indicator Removal).",
+  "sandbox_statement": "Sandbox analysis of sha256:4a8b2c1d9e3f0a7b confirms MALICIOUS. File encrypted 160 files, deleted shadow copies, dropped a ransom note. C2 callback attempted to secure-payments.xyz. 6 IOCs extracted and blacklisted.",
+  "dna_statement": "Behavioural baseline deviation detected for entity 'host_SRV-DC01'. Z-score: 5.10 (threshold: 3.00). Anomalous features: file_write_rate, shadow_delete_attempt, c2_beacon. Deviation magnitude is 3.2x above normal operating range.",
+  "prediction_statement": "Based on current attack stage (ransomware), system predicts lateral movement attempt within 10 minutes (confidence: 71%). Recommended action: Immediate containment and host isolation.",
+  "recommended_actions": [
+    "Isolate affected host immediately from all network segments",
+    "Block malicious IPs at perimeter firewall and SIEM",
+    "Revoke all active sessions for compromised credentials",
+    "Disconnect all storage volumes and NAS shares immediately",
+    "Do NOT pay ransom \u2014 contact incident response team",
+    "Restore from last known-good offline backup",
+    "Hash unknown file and submit to VirusTotal",
+    "Blacklist all IOCs extracted from sandbox detonation",
+    "Initiate behavioural review for entity 'host_SRV-DC01' \u2014 z-score exceeds 3\u03c3 threshold",
+    "Pre-emptively monitor for 'lateral movement' (predicted next attack stage, confidence: 91%)",
+    "Preserve all logs and evidence before any remediation"
+  ],
+  "shap_top_features": [
+    {
+      "feature": "has_ransomware_pattern",
+      "impact": 0.312,
+      "direction": "increase"
+    },
+    {
+      "feature": "has_file_source",
+      "impact": 0.201,
+      "direction": "increase"
+    },
+    {
+      "feature": "privilege_escalation",
+      "impact": 0.118,
+      "direction": "increase"
+    },
+    {
+      "feature": "time_of_day",
+      "impact": -0.041,
+      "direction": "decrease"
+    },
+    {
+      "feature": "avg_score",
+      "impact": 0.038,
+      "direction": "increase"
+    }
+  ]
+}

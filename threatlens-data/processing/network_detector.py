@@ -22,6 +22,7 @@ from kafka import KafkaConsumer, KafkaProducer
 from kafka.errors import KafkaError
 from network_model.infer import NetworkInference
 from network_model.preprocess_unsw import preprocess_single_event
+from dna_integration import enrich_with_dna
 
 # ── Logging ────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -122,7 +123,7 @@ def process_event(event: dict):
         "raw_data":            raw,
         "anomaly_score":       anomaly_score,
         "severity":            severity_from_score(anomaly_score),
-        "dna_deviation_score": event.get("dna_deviation_score", 0.0),
+        "dna_deviation_score": 0.0,  # will be set by enrich_with_dna below
         "feature_vector":      feature_vector,
     }
 
@@ -139,11 +140,16 @@ def run():
                 if output is None:
                     continue
 
+                # ── DNA enrichment ─────────────────────────────────────────
+                output = enrich_with_dna(output, source_type="network")
+
                 producer.send(OUTPUT_TOPIC, output)
                 producer.flush()
 
+                dna_score = output.get("dna_deviation_score", 0.0)
                 logger.info(
                     f"Score: {output['anomaly_score']:6.2f} | "
+                    f"DNA: {dna_score:5.1f} | "
                     f"Severity: {output['severity']:8s} | "
                     f"Host: {output['host']} | "
                     f"Bytes up={output['raw_data'].get('bytes_sent',0)} "

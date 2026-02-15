@@ -1,0 +1,99 @@
+Based on your directory structure, here are the commands in exact order:
+
+---
+
+### Step 1 — Start Docker services
+```bash
+cd C:\Users\Samagra\Documents\ThreatLens
+docker-compose -f threatlens-data/docker-compose.yml up -d
+```
+
+---
+
+### Step 2 — Verify all services are running
+```bash
+docker ps
+```
+Make sure you see: kafka, zookeeper, redis, minio all `Up`
+
+---
+
+### Step 3 — Create Kafka topics
+```bash
+cd C:\Users\Samagra\Documents\ThreatLens
+python threatlens-data/config/kafka_topics.py --create
+```
+
+---
+
+### Step 4 — Open Terminal 1 — Start Network Detector
+```bash
+cd C:\Users\Samagra\Documents\ThreatLens
+python threatlens-data/processing/network_detector.py
+```
+Wait until you see:
+```
+✅ Models loaded successfully
+Network Detector started — [raw-network-events] → [network-anomaly-scores]
+```
+
+---
+
+### Step 5 — Open Terminal 2 — Start Camera Detector
+```bash
+cd C:\Users\Samagra\Documents\ThreatLens
+python camera_service/main.py
+```
+Wait until you see:
+```
+✅ YOLOv8 loaded successfully
+Camera detection service started. Waiting for frames...
+```
+
+---
+
+### Step 6 — Open Terminal 3 — Send Network Data
+```bash
+cd C:\Users\Samagra\Documents\ThreatLens
+python threatlens-data/ingestion/network_ingestion.py --mode synthetic
+```
+
+---
+
+### Step 7 — Open Terminal 4 — Run Camera Demo Attack
+```bash
+cd C:\Users\Samagra\Documents\ThreatLens
+python camera_service/demo_attack.py --use-webcam
+```
+
+---
+
+### Step 8 — Open Terminal 5 — Watch scored output (optional verification)
+```bash
+docker exec -it kafka kafka-console-consumer --topic network-anomaly-scores --bootstrap-server localhost:9092
+```
+
+---
+
+### If DNA engine throws import errors
+
+The DNA engine is in the root but `dna_integration.py` is in `threatlens-data/processing/`. Python needs to find `dna_engine` from the root. Set this environment variable before running the detectors:
+
+**Windows PowerShell:**
+```powershell
+$env:PYTHONPATH = "C:\Users\Samagra\Documents\ThreatLens"
+```
+
+Then run the detectors in the same terminal window after setting that. So Terminal 1 becomes:
+```powershell
+$env:PYTHONPATH = "C:\Users\Samagra\Documents\ThreatLens"
+cd C:\Users\Samagra\Documents\ThreatLens
+python threatlens-data/processing/network_detector.py
+```
+
+And Terminal 2:
+```powershell
+$env:PYTHONPATH = "C:\Users\Samagra\Documents\ThreatLens"
+cd C:\Users\Samagra\Documents\ThreatLens
+python camera_service/main.py
+```

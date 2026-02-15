@@ -1,0 +1,11 @@
+{
+  "incident_id": "INC-TEST-EXFIL",
+  "risk_score": 87.5,
+  "severity": "HIGH",
+  "attack_type": "data_exfiltration",
+  "verdict": "MALICIOUS",
+  "confidence": 85,
+  "zone": "server_room",
+  "generated_at": "2026-02-15T00:40:29.838224Z",
+  "engine": "ThreatLens Sandbox+Evidence v2.0"
+}

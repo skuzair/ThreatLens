@@ -1,0 +1,11 @@
+{
+  "incident_id": "INC-TEST-RANSOMWARE",
+  "risk_score": 95.0,
+  "severity": "CRITICAL",
+  "attack_type": "ransomware",
+  "verdict": "MALICIOUS",
+  "confidence": 100,
+  "zone": "internal_network",
+  "generated_at": "2026-02-15T00:40:25.605953Z",
+  "engine": "ThreatLens Sandbox+Evidence v2.0"
+}

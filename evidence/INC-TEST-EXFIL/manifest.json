@@ -1,0 +1,290 @@
+{
+  "schema_version": "2.1",
+  "incident_id": "INC-TEST-EXFIL",
+  "capture_timestamp": "2026-02-15T00:40:30.131024Z",
+  "captured_by": "ThreatLens Sandbox+Evidence Engine v2.0",
+  "incident_metadata": {
+    "severity": "HIGH",
+    "risk_score": 87.5,
+    "attack_type": "data_exfiltration",
+    "zone": "server_room",
+    "verdict": "MALICIOUS",
+    "confidence": 85,
+    "indicators": []
+  },
+  "iocs": {
+    "ips": [
+      "185.220.101.47",
+      "8.8.8.8"
+    ],
+    "domains": [
+      "update.microsofft-cdn.com",
+      "dns-tunnel"
+    ],
+    "registry_keys": [],
+    "processes": [
+      "powershell.exe",
+      "cmd.exe"
+    ],
+    "mitre_behaviors": [
+      "T1071",
+      "T1041"
+    ]
+  },
+  "evidence_files": [
+    {
+      "path": "camera\\clip.mp4",
+      "size_bytes": 1205913,
+      "sha256": "46ca92c7fea6ba3774dc516a82b273597c24d538d0ea00709d04e5a4d9e19621"
+    },
+    {
+      "path": "camera\\frame_0000.jpg",
+      "size_bytes": 52143,
+      "sha256": "2ae853eb3ce83d3de31aaf1ae5756d674f5c94393243c7a5cfac4386baadbeee"
+    },
+    {
+      "path": "camera\\frame_0000_annotated.jpg",
+      "size_bytes": 200065,
+      "sha256": "36b4269eaf95864f709ca0291d61de90009ef40bc6f75e5ef63a8a48cafc30e9"
+    },
+    {
+      "path": "camera\\frame_0001.jpg",
+      "size_bytes": 53361,
+      "sha256": "317a8d1e555d069e6b7ecc41414c60232f48ef3e83391f05914325e7929ae129"
+    },
+    {
+      "path": "camera\\frame_0001_annotated.jpg",
+      "size_bytes": 201336,
+      "sha256": "783e554d6af9d869d80dd7ac863bdea94008b52d82ce3d116f8d3f03a5061528"
+    },
+    {
+      "path": "camera\\frame_0002.jpg",
+      "size_bytes": 53722,
+      "sha256": "381f635b3b0ffa143b7eb85d295ddeca45144eca33f89e22a560dc97ad19f36d"
+    },
+    {
+      "path": "camera\\frame_0002_annotated.jpg",
+      "size_bytes": 200537,
+      "sha256": "86773413b8c092ae2aaf3720e0254e51c42b7ac66ba1cec29a05060ba87f936e"
+    },
+    {
+      "path": "camera\\frame_0003.jpg",
+      "size_bytes": 55858,
+      "sha256": "e6c13064fdd2f74761265ec8a12c02de05a1a64d8324b88cb716c389eec59345"
+    },
+    {
+      "path": "camera\\frame_0003_annotated.jpg",
+      "size_bytes": 201791,
+      "sha256": "bb49796015a03986ae6c0df018a4f230dbb1a705a2d77de5e8795e63bd8db3a9"
+    },
+    {
+      "path": "camera\\frame_0004.jpg",
+      "size_bytes": 57188,
+      "sha256": "38ab70946673dbe36b1b097b0a5fa7e751d6e1e72f588b641dceab760e58bee3"
+    },
+    {
+      "path": "camera\\frame_0004_annotated.jpg",
+      "size_bytes": 200691,
+      "sha256": "ac9f341fef9841c99f89256a748c67bb1759db221621a11fa420982b2ff78606"
+    },
+    {
+      "path": "camera\\frame_0005.jpg",
+      "size_bytes": 58285,
+      "sha256": "a1f322aaadecaba99ecfb8a1098dff421dfc383e9102d6355c9aaf96ad378403"
+    },
+    {
+      "path": "camera\\frame_0005_annotated.jpg",
+      "size_bytes": 201469,
+      "sha256": "fb150c9261e5fe12243807719d63f27d7b1088eef22b95ed698e9b336822ea6e"
+    },
+    {
+      "path": "camera\\frame_0006.jpg",
+      "size_bytes": 61115,
+      "sha256": "f17ef290b4f2eeae5c66239a51a438b4aa1739c5689fe47e92751de771e0e0fb"
+    },
+    {
+      "path": "camera\\frame_0007.jpg",
+      "size_bytes": 62765,
+      "sha256": "974fecb0982d2a680969801d14fcd5e1ff0f37a299dd0804472c14d9555442b6"
+    },
+    {
+      "path": "camera\\frame_0008.jpg",
+      "size_bytes": 63011,
+      "sha256": "f76deda67428662fcf9ec1d1202fd2670d0109a28600ca6213470e1a00eafcfc"
+    },
+    {
+      "path": "camera\\frame_0009.jpg",
+      "size_bytes": 65216,
+      "sha256": "ec1162f0261ba04594124659507aaac9d7322b4c4749e72ea910336a40f536b3"
+    },
+    {
+      "path": "camera\\frame_0010.jpg",
+      "size_bytes": 66901,
+      "sha256": "7d102b39cb84d7c4ea12c778c9f5c017e198ad0c1f44fc50bcf25203ce095b05"
+    },
+    {
+      "path": "camera\\frame_0011.jpg",
+      "size_bytes": 67816,
+      "sha256": "d7686f9cfb3fec092fe82db00667d3cc5accd33202aeb59533597012e9476963"
+    },
+    {
+      "path": "camera\\frame_0012.jpg",
+      "size_bytes": 69335,
+      "sha256": "ce6125286877e834fd222289f88d07bebd992ea687b04a4c276db7c2c24de813"
+    },
+    {
+      "path": "camera\\frame_0013.jpg",
+      "size_bytes": 72156,
+      "sha256": "7a1b5ca88d63e1639e1406a06545cbb5bc431f22336e80379adcffec45a168e7"
+    },
+    {
+      "path": "camera\\frame_0014.jpg",
+      "size_bytes": 72180,
+      "sha256": "6767a45d36b3e8b6c6c228ece3a73a51e51c79d611dec4bf46380d5ea3e5363f"
+    },
+    {
+      "path": "camera\\frame_0015.jpg",
+      "size_bytes": 73726,
+      "sha256": "7bb4fbca9c5185856831a10bdfb5f67c610ad835168f8428cbfe7f51d5a3d93b"
+    },
+    {
+      "path": "camera\\frame_0016.jpg",
+      "size_bytes": 79321,
+      "sha256": "2d05e0ff0c07e5ef11d6824bf5f015e58b24e22a68633bfc866b382fd792ff93"
+    },
+    {
+      "path": "camera\\frame_0017.jpg",
+      "size_bytes": 82156,
+      "sha256": "40ac7264acb72f9f5924e08b041caa8006e87c4f73d3ae6f840436143fb8a23f"
+    },
+    {
+      "path": "camera\\frame_0018.jpg",
+      "size_bytes": 85050,
+      "sha256": "3ad4d8a60062d273bd291a4a183bfbc6aaa4dded809071910c01b3369fa24f1f"
+    },
+    {
+      "path": "camera\\frame_0019.jpg",
+      "size_bytes": 90478,
+      "sha256": "bb03a7ce93e7b4501e4e4aff2ca5d2d9f79645e0dd01751b544f9263848fe18a"
+    },
+    {
+      "path": "camera\\frame_0020.jpg",
+      "size_bytes": 92518,
+      "sha256": "a5a2c7723fcab3194f4b51ee4c6d99e0886c20c24fec7f0345ba7fa79798ee03"
+    },
+    {
+      "path": "camera\\frame_0021.jpg",
+      "size_bytes": 94707,
+      "sha256": "e3b1e64a5668c6eebb4622848b0996f3dc208684ae7172e0816a8ed49126c1c9"
+    },
+    {
+      "path": "camera\\frame_0022.jpg",
+      "size_bytes": 97298,
+      "sha256": "09e642e04173680097a79c9eb6a09ae069561172f64d8dc30c75704482c32985"
+    },
+    {
+      "path": "camera\\frame_0023.jpg",
+      "size_bytes": 102206,
+      "sha256": "5d502f131bdecb77a4fc343ef18a24424ab0e86996c36bf6b73dd79176eb74f7"
+    },
+    {
+      "path": "camera\\frame_0024.jpg",
+      "size_bytes": 102584,
+      "sha256": "58d52dbe3bb5c5ea9271ec7ec50772f58d00982c5480b3fc26294e24c9bf2d74"
+    },
+    {
+      "path": "camera\\frame_0025.jpg",
+      "size_bytes": 103888,
+      "sha256": "2588c8ab9b5d27668a45ea9f840ec254bbd72c9a045d2376e9bc2470fb31abc1"
+    },
+    {
+      "path": "camera\\frame_0026.jpg",
+      "size_bytes": 106116,
+      "sha256": "5f46b292fcc4f219d90c148d8092529a8d1787901793d58158283746c14fa238"
+    },
+    {
+      "path": "camera\\frame_0027.jpg",
+      "size_bytes": 107023,
+      "sha256": "1a77702d3f8dbae5856cdb0c8a89549452115a4baada7fc5028337ca1ac4e0ac"
+    },
+    {
+      "path": "camera\\frame_0028.jpg",
+      "size_bytes": 108440,
+      "sha256": "1aea67c13f2c00057e9d542047e5d01a9b181dbf8f9eb5b68004fd5bc3b9fe39"
+    },
+    {
+      "path": "camera\\frame_0029.jpg",
+      "size_bytes": 109412,
+      "sha256": "fd9987cae71a81e2670c9b3cdfd25e7e6873a0fbf03d80001163ab5f761495cb"
+    },
+    {
+      "path": "camera\\frame_mock_annotated.jpg",
+      "size_bytes": 20,
+      "sha256": "2775d83c3a4e458f6616f29c61ae85f1d0b4c66241fcf7866cab86d96f0b429f"
+    },
+    {
+      "path": "files\\exfiltrated_records_sample.json",
+      "size_bytes": 4943,
+      "sha256": "56b9bd7ae2d76bfd2d50d2de68ace639315cf29ba4ca312662ba57aa66a1c90a"
+    },
+    {
+      "path": "logs\\events.json",
+      "size_bytes": 8005,
+      "sha256": "dcbbd7ba4ce4b348c51f238a653a2793610859dd9bf5ca7d02b01fb465675d0f"
+    },
+    {
+      "path": "logs\\events.log",
+      "size_bytes": 702,
+      "sha256": "c04810c27c063206c768d25c9f1508643185ce77be9bb5ffc9c505d4f63e3fb2"
+    },
+    {
+      "path": "logs\\log_snippet.json",
+      "size_bytes": 507,
+      "sha256": "fe5553537999557fae596b382166b502e3aade26bd19bbe97a716b7a9554bd6e"
+    },
+    {
+      "path": "logs\\sandbox_log.json",
+      "size_bytes": 3134,
+      "sha256": "b37a94a2968c428dbfe4c24b1ebb1dc62056f280c1f5877d0ab6d10590a83d2d"
+    },
+    {
+      "path": "logs\\terminal_output.log",
+      "size_bytes": 1435,
+      "sha256": "32973bcd6663e3685978410cdf9439a691237e500102492dd53ac40cc7a662a3"
+    },
+    {
+      "path": "manifest.json",
+      "size_bytes": 3847,
+      "sha256": "d11e362e9ccf381f6bca92ea29f8ce41665e99f965038986d1f0136dc6208192"
+    },
+    {
+      "path": "metadata.json",
+      "size_bytes": 297,
+      "sha256": "169ad4948efc8c7674b343e5083fb039f9a21049a84ad9ceac0b53e120523baa"
+    },
+    {
+      "path": "network\\capture.pcap",
+      "size_bytes": 102983,
+      "sha256": "98a6d423aa9e8541a729a54474d275fb7ced12e0e948d27c2e52af2d4c80ec8b"
+    },
+    {
+      "path": "threat_timeline.json",
+      "size_bytes": 1465,
+      "sha256": "ad0446c4ac2d07976cd7d7ad4634e0f333341cb840057e0d6891d72924c88575"
+    }
+  ],
+  "file_count": 48,
+  "total_size_mb": 4.678,
+  "integrity": {
+    "sha256_chain_hash": "813a80146b84d32258b7b61397e8c9971159963bc49475bad475d19ede8fd76d",
+    "algorithm": "SHA-256",
+    "tamper_evident": true
+  },
+  "blockchain_anchor": {
+    "status": "PENDING",
+    "network": "Ethereum Sepolia Testnet",
+    "contract": "0x742d35Cc6634C0532925a3b8D4C9fA1234567890",
+    "tx_hash": null
+  },
+  "ready_for_blockchain": true
+}

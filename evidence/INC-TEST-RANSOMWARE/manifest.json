@@ -1,0 +1,304 @@
+{
+  "schema_version": "2.1",
+  "incident_id": "INC-TEST-RANSOMWARE",
+  "capture_timestamp": "2026-02-15T00:40:25.983744Z",
+  "captured_by": "ThreatLens Sandbox+Evidence Engine v2.0",
+  "incident_metadata": {
+    "severity": "CRITICAL",
+    "risk_score": 95.0,
+    "attack_type": "ransomware",
+    "zone": "internal_network",
+    "verdict": "MALICIOUS",
+    "confidence": 100,
+    "indicators": []
+  },
+  "iocs": {
+    "ips": [
+      "185.220.101.47",
+      "91.108.4.200"
+    ],
+    "domains": [
+      "secure-payments.xyz"
+    ],
+    "registry_keys": [
+      "HKCU\\Run\\persist_malware"
+    ],
+    "processes": [
+      "cmd.exe",
+      "vssadmin.exe",
+      "powershell.exe"
+    ],
+    "mitre_behaviors": [
+      "T1486",
+      "T1547",
+      "T1071",
+      "T1490"
+    ]
+  },
+  "evidence_files": [
+    {
+      "path": "camera\\frame_0000.jpg",
+      "size_bytes": 54644,
+      "sha256": "de1c19a77480f4807165167956ad3f9ed639e9358fba6e62bb64fc6c54f9b781"
+    },
+    {
+      "path": "camera\\frame_0001.jpg",
+      "size_bytes": 56077,
+      "sha256": "9712b465f11b86a659cdad820f2ac8873bdb3de55bd3ebb998f7e61b12419fc8"
+    },
+    {
+      "path": "camera\\frame_0002.jpg",
+      "size_bytes": 56419,
+      "sha256": "5d3277d08426e34f15dbfc749be7f5bc1deb5ccc334d67f96b89d562672c3bf5"
+    },
+    {
+      "path": "camera\\frame_0003.jpg",
+      "size_bytes": 57725,
+      "sha256": "41723848523c7bf262c5740923e00e5798a82dc679484bcd6dd049cdc4da1f24"
+    },
+    {
+      "path": "camera\\frame_0004.jpg",
+      "size_bytes": 59424,
+      "sha256": "b8acfc6373e89106dadcd818553304f1bf6ee92b7c65a79b92ab3eb54e410e1c"
+    },
+    {
+      "path": "camera\\frame_0005.jpg",
+      "size_bytes": 59252,
+      "sha256": "620367b226ece1918d91af26f5b69f41a2924474c913af3ef1c2fd9c58436536"
+    },
+    {
+      "path": "camera\\frame_0006.jpg",
+      "size_bytes": 60978,
+      "sha256": "55fe5f29cc273ba0c673736b4fa27fdab5fe0dd25f87fc845dfabbe45f49922e"
+    },
+    {
+      "path": "camera\\frame_0007.jpg",
+      "size_bytes": 62652,
+      "sha256": "60e679ffa6b57364106ed197bfdd42b80477d3a6e6c24c5f26d2930819e174ce"
+    },
+    {
+      "path": "camera\\frame_0008.jpg",
+      "size_bytes": 64923,
+      "sha256": "d173ffcc806a1cdaa1c8587addafd611d75f93363b3dc53f36096d9b357dcb50"
+    },
+    {
+      "path": "camera\\frame_0009.jpg",
+      "size_bytes": 66622,
+      "sha256": "4c109384ab924fd952f7ae18a502df7b2f559a0c6b6a2c8a4a530db215091e28"
+    },
+    {
+      "path": "camera\\frame_0010.jpg",
+      "size_bytes": 68281,
+      "sha256": "1ff662848f0a77b75d39549883e8fc429f31cffd3bcc3c109a377d418eb0ee5b"
+    },
+    {
+      "path": "camera\\frame_0011.jpg",
+      "size_bytes": 69727,
+      "sha256": "722bfd3610a303063453ea561f603e4eb22ea78009c1b1259eaac26743bd938f"
+    },
+    {
+      "path": "camera\\frame_0012.jpg",
+      "size_bytes": 71587,
+      "sha256": "0eb125133de07519b6351abba840beaea5abdf12d8620e21a27b7146dd52b3ea"
+    },
+    {
+      "path": "camera\\frame_0013.jpg",
+      "size_bytes": 73312,
+      "sha256": "7535259852535ebfe9097ffa917c237cc61230112d4b924eaaab8cf0d679c3d7"
+    },
+    {
+      "path": "camera\\frame_0014.jpg",
+      "size_bytes": 73650,
+      "sha256": "7dcb70a94a85e2f356403de896f660067b5809b0f36c269e4fb364ec6e70c59e"
+    },
+    {
+      "path": "camera\\frame_0015.jpg",
+      "size_bytes": 74975,
+      "sha256": "e86c72cd417821c7063a608d569f8b6706ce554ef4b1679e9218da730c058027"
+    },
+    {
+      "path": "camera\\frame_0016.jpg",
+      "size_bytes": 77369,
+      "sha256": "eb37b3a23586e78df88f96e819f96e81efdad3d6e684078ab2aa94f9bbb66ee7"
+    },
+    {
+      "path": "camera\\frame_0017.jpg",
+      "size_bytes": 78855,
+      "sha256": "27e277607652eb5ed9882a0baa7c064e3e0f254234e3ebcbca4d6cc2d1bf735f"
+    },
+    {
+      "path": "camera\\frame_0018.jpg",
+      "size_bytes": 80560,
+      "sha256": "6dd9856f4df2a2de4ddf0bcb89523963b16f7ae22e7c1c0d2036002f57f07cb0"
+    },
+    {
+      "path": "camera\\frame_0019.jpg",
+      "size_bytes": 81384,
+      "sha256": "35206b2f935df12ba3081599679525791655698e652bc4ed173ddc96dd0b3716"
+    },
+    {
+      "path": "camera\\frame_0020.jpg",
+      "size_bytes": 81660,
+      "sha256": "5f3ed7986f372d591f9edc2031cf90ffccfb29d11b0081e053490bf8cccbdef7"
+    },
+    {
+      "path": "camera\\frame_0021.jpg",
+      "size_bytes": 82866,
+      "sha256": "6bc3a6c1a54d98791a43da7e9ad964bbac44f89140eb3fff7d24734a0ff84d8b"
+    },
+    {
+      "path": "camera\\frame_0022.jpg",
+      "size_bytes": 84073,
+      "sha256": "bf8a8eabfed44898c349f2863069e1c5d775007d4baf0e9588e073ff355ecb76"
+    },
+    {
+      "path": "camera\\frame_0023.jpg",
+      "size_bytes": 85161,
+      "sha256": "1ef97af4caf8bda352de35b0431f59f0d1dcb200946fc45a667ebc2f69d5e003"
+    },
+    {
+      "path": "camera\\frame_0024.jpg",
+      "size_bytes": 86454,
+      "sha256": "bf3b5324efb47637fad49f8f70f6fd1b199b9e5d71d0fa95a49ae37532e6e6c4"
+    },
+    {
+      "path": "camera\\frame_0025.jpg",
+      "size_bytes": 87694,
+      "sha256": "5f3e02cc20222aeb645a830b9d6b96798a79d08846c7fcf04ea646c2890ed063"
+    },
+    {
+      "path": "camera\\frame_0026.jpg",
+      "size_bytes": 89173,
+      "sha256": "f0ec1f91f4c6283bda79fcb8deb1cc4a3eb2125df5ade864ec8b79d58e3d1b8f"
+    },
+    {
+      "path": "camera\\frame_0027.jpg",
+      "size_bytes": 89273,
+      "sha256": "6dc452c0f24d35512cc780c40b73ef68223bf87e4224fc9f546113d5599f6910"
+    },
+    {
+      "path": "camera\\frame_0028.jpg",
+      "size_bytes": 90611,
+      "sha256": "1402e982cd92e8b54093f9f05a51edc1923b0f29c15ad8a35fd499c5121205be"
+    },
+    {
+      "path": "camera\\frame_0029.jpg",
+      "size_bytes": 93529,
+      "sha256": "fd3b1e536d35f3840d94611ae6d51f810f3d359013dd2e1bf8b837c1a341806c"
+    },
+    {
+      "path": "files\\backup_credentials.txt",
+      "size_bytes": 43,
+      "sha256": "28040cd9f85096dbe5e25092effe69c7600ca735cbd2e7c7e3011bd2a39acbf6"
+    },
+    {
+      "path": "files\\backup_credentials.txt.locked",
+      "size_bytes": 43,
+      "sha256": "c4550beb8d26100e9c7e5ddf782fb4985f4ce3c2df7a1646708e39482233d04e"
+    },
+    {
+      "path": "files\\customer_database_export.csv",
+      "size_bytes": 29705,
+      "sha256": "87c2de3b74abb34fa57c26683ffb10b5625e583a8d27c8364368d3ba44846c09"
+    },
+    {
+      "path": "files\\customer_database_export.csv.locked",
+      "size_bytes": 29705,
+      "sha256": "9232a77cf4a0fe219a3ccfb7cfed6dc012a4384b512669524d4cf29fa10369d3"
+    },
+    {
+      "path": "files\\customer_records.csv",
+      "size_bytes": 6887,
+      "sha256": "cb3336143a5eacc6cd0ae3ffa4d5bbca51a51ae35daa48d9c37a3f266c2c703b"
+    },
+    {
+      "path": "files\\customer_records.csv.locked",
+      "size_bytes": 6887,
+      "sha256": "263328f3769ed8406923a3af4eb9ab1e62ed07c27a6144994f6ee4f30441925a"
+    },
+    {
+      "path": "files\\financial_report_Q4.xlsx",
+      "size_bytes": 3204,
+      "sha256": "39e1712a0308508251a581d404dbdf804839114cd9dd1a97130760a5e591419e"
+    },
+    {
+      "path": "files\\financial_report_Q4.xlsx.locked",
+      "size_bytes": 3204,
+      "sha256": "258a1621d3eabd8e710bb7eb3b87b094eef2c88f52e2c79205ecaf3c1dc80a41"
+    },
+    {
+      "path": "files\\financial_report_Q4_2025.xlsx",
+      "size_bytes": 5204,
+      "sha256": "6496c489fb4039f4274b3c90ce7766d6784dc1d274e6506011f344e085781209"
+    },
+    {
+      "path": "files\\financial_report_Q4_2025.xlsx.locked",
+      "size_bytes": 5204,
+      "sha256": "23942382c7c3984b36cf45f0e3173e0aedccd51a53ee1269b82bb299d3e7fe85"
+    },
+    {
+      "path": "files\\README_RESTORE.txt",
+      "size_bytes": 153,
+      "sha256": "d1b3b0d0893b268794fe24a8ca156739544c42121930149b487eeb2680d9cd01"
+    },
+    {
+      "path": "files\\registry_modifications.json",
+      "size_bytes": 313,
+      "sha256": "2f3e76ddb66c72a1158da04d96d3e4a749d78ec801827da0ebfb9973bce802b1"
+    },
+    {
+      "path": "logs\\events.json",
+      "size_bytes": 8157,
+      "sha256": "2c596b6a7ac73e60b022d394ad72da94963c3222503f36614f57a767c5926ebe"
+    },
+    {
+      "path": "logs\\events.log",
+      "size_bytes": 703,
+      "sha256": "4020753c5195ef0cc79b5588cd1e189608b752187acb52e7d600c15bc2856b6f"
+    },
+    {
+      "path": "logs\\sandbox_log.json",
+      "size_bytes": 2764,
+      "sha256": "9c9e7809d9a8b07410328b4fbefb1f09505db392032122a09e7ddb991ff1779a"
+    },
+    {
+      "path": "logs\\terminal_output.log",
+      "size_bytes": 963,
+      "sha256": "7e0ead9b9d7e908f2e62b147670f3efa5e9a4dbb82f63f7772bf97872e87dfef"
+    },
+    {
+      "path": "manifest.json",
+      "size_bytes": 3687,
+      "sha256": "ca62d255b53608c5b02e100f1e2d785ffbce5ae0f1200174b4eda7636590e391"
+    },
+    {
+      "path": "metadata.json",
+      "size_bytes": 305,
+      "sha256": "f80a76bb9f927e718f2fcc8aa196aeeeb44b933f4cd211eeb19df3baa22abb85"
+    },
+    {
+      "path": "network\\capture.pcap",
+      "size_bytes": 3069,
+      "sha256": "da3cd3c3ee896326e61b39194ebfbb9acd68962854c0ea0f08b7b00514b82c3a"
+    },
+    {
+      "path": "threat_timeline.json",
+      "size_bytes": 1719,
+      "sha256": "eb7f93c77fbeb7f9a2636c3687741428017a22c4efb193c9462037a22b7148b6"
+    }
+  ],
+  "file_count": 50,
+  "total_size_mb": 2.223,
+  "integrity": {
+    "sha256_chain_hash": "e0ef1f4a56f98003886e12976d93cfef178794fd5ef6ae63d717d1a3ba0bba65",
+    "algorithm": "SHA-256",
+    "tamper_evident": true
+  },
+  "blockchain_anchor": {
+    "status": "PENDING",
+    "network": "Ethereum Sepolia Testnet",
+    "contract": "0x742d35Cc6634C0532925a3b8D4C9fA1234567890",
+    "tx_hash": null
+  },
+  "ready_for_blockchain": true
+}

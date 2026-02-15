@@ -1,0 +1,12 @@
+{
+  "incident_id": "INC-TEST-001",
+  "risk_score": 85.5,
+  "severity": "HIGH",
+  "intent": "data_exfiltration",
+  "sources": [
+    "camera",
+    "logs",
+    "network"
+  ],
+  "generated_at": "2026-02-14T23:28:25.765363"
+}

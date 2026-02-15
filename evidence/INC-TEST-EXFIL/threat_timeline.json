@@ -1,0 +1,50 @@
+{
+  "incident_id": "INC-TEST-EXFIL",
+  "attack_type": "data_exfiltration",
+  "kill_chain": "MITRE ATT&CK v14",
+  "total_duration_sec": 100,
+  "timeline": [
+    {
+      "phase": "Initial Access",
+      "timestamp": "2026-02-15T00:40:25.985742Z",
+      "delta_sec": 0,
+      "description": "Phishing \u2192 credential harvest \u2192 initial foothold",
+      "confidence": 0.89
+    },
+    {
+      "phase": "Discovery",
+      "timestamp": "2026-02-15T00:40:45.985742Z",
+      "delta_sec": 20,
+      "description": "Internal network scan, credential enumeration",
+      "confidence": 0.9
+    },
+    {
+      "phase": "Collection",
+      "timestamp": "2026-02-15T00:41:05.985742Z",
+      "delta_sec": 40,
+      "description": "500 records staged for exfiltration",
+      "confidence": 0.86
+    },
+    {
+      "phase": "C2 Setup",
+      "timestamp": "2026-02-15T00:41:25.985742Z",
+      "delta_sec": 60,
+      "description": "DNS tunnel established to attacker infrastructure",
+      "confidence": 0.91
+    },
+    {
+      "phase": "Exfiltration",
+      "timestamp": "2026-02-15T00:41:45.985742Z",
+      "delta_sec": 80,
+      "description": "35.4 KB exfiltrated via DNS tunnelling",
+      "confidence": 0.91
+    },
+    {
+      "phase": "Defense Evasion",
+      "timestamp": "2026-02-15T00:42:05.985742Z",
+      "delta_sec": 100,
+      "description": "Event logs cleared, traces removed",
+      "confidence": 0.85
+    }
+  ]
+}

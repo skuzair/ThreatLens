@@ -1,0 +1,57 @@
+{
+  "incident_id": "INC-TEST-RANSOMWARE",
+  "attack_type": "ransomware",
+  "kill_chain": "MITRE ATT&CK v14",
+  "total_duration_sec": 110,
+  "timeline": [
+    {
+      "phase": "Initial Access",
+      "timestamp": "2026-02-15T00:40:21.350283Z",
+      "delta_sec": 0,
+      "description": "RDP brute-force \u2192 admin credentials compromised",
+      "confidence": 0.89
+    },
+    {
+      "phase": "Execution",
+      "timestamp": "2026-02-15T00:40:36.350283Z",
+      "delta_sec": 15,
+      "description": "Ransomware binary dropped and executed in sandbox",
+      "confidence": 0.86
+    },
+    {
+      "phase": "Discovery",
+      "timestamp": "2026-02-15T00:40:51.350283Z",
+      "delta_sec": 30,
+      "description": "File system enumeration \u2014 160 files targeted",
+      "confidence": 0.9
+    },
+    {
+      "phase": "Defense Evasion",
+      "timestamp": "2026-02-15T00:41:11.350283Z",
+      "delta_sec": 50,
+      "description": "Shadow copies deleted, backup services stopped",
+      "confidence": 0.85
+    },
+    {
+      "phase": "C2 Communication",
+      "timestamp": "2026-02-15T00:41:31.350283Z",
+      "delta_sec": 70,
+      "description": "3 beacons to attacker infrastructure",
+      "confidence": 0.92
+    },
+    {
+      "phase": "Impact: Encryption",
+      "timestamp": "2026-02-15T00:41:51.350283Z",
+      "delta_sec": 90,
+      "description": "160 files encrypted with .locked extension",
+      "confidence": 0.85
+    },
+    {
+      "phase": "Impact: Ransom Note",
+      "timestamp": "2026-02-15T00:42:11.350283Z",
+      "delta_sec": 110,
+      "description": "README_RESTORE.txt dropped in target directories",
+      "confidence": 0.9
+    }
+  ]
+}

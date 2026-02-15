@@ -1,0 +1,8 @@
+{
+  "key": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Run",
+  "value": "SystemUpdate",
+  "data": "C:\\ProgramData\\WindowsUpdate\\svchost.exe -silent",
+  "action": "CREATED",
+  "timestamp": "2026-02-14T23:55:26.746474Z",
+  "note": "Persistence mechanism \u2014 executed on every system boot"
+}
